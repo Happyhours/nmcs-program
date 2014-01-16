@@ -7,7 +7,7 @@ from .models import Postal, Customer, Telephone
 class CustomerDetailView(generic.DetailView):
     model = Customer
     context_object_name = 'customer'
-    #template_name = 'customers/index.html'
+    template_name = 'customers/customer_detail.html'
 
 
 #def index(request):
