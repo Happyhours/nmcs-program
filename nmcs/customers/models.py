@@ -10,13 +10,14 @@ class Postal(models.Model):
     def __str__(self):
         return self.postal
 
-        
+
 class Customer(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
     street = models.CharField(max_length=100)
     postal = models.ForeignKey(Postal)
+    #objects = CustomerManager() 
 
     def __str__(self):
         return self.first_name

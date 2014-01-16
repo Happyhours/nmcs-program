@@ -1,0 +1,14 @@
+{{ object.pk }}
+{{ object.first_name }}
+{{ object.last_name }}
+{{ object.street }}
+{{ object.email }}
+{{ object.postal.postal }}
+{{ object.postal.city }}
+{{ object.postal.postal }}
+{{ object.postal.city }}
+
+
+{% for telephone in object.telephone_set.all %}
+    {{ telephone.number }}
+{% endfor %}
