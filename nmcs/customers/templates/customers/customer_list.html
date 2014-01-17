@@ -2,21 +2,21 @@
     <input type="text" name="q" />
     <button type="submit">search</button>
 </form>
+
 {% if customer_list %}
     {% with customer_list|first as customer %}
-        {{ customer.pk }}
         {{ customer.first_name }}
         {{ customer.last_name }}
-        {{ customer.street }}
-        {{ customer.email }}
-        {{ customer.postal.postal }}
-        {{ customer.postal.city }}
-        {{ customer.postal.postal }}
-        {{ customer.postal.city }}
 
-        {% for telephone in customer.telephone_set.all %}
+        {% with customer.telephone_set.all|first as telephone %}
             {{ telephone.number }}
-        {% endfor %}
+        {% endwith %}
+        
+        {{ customer.email }}
+
+        {% with customer.mc_set.all|first as mc %}
+            {{ mc.registration_nr }}
+        {% endwith %}
     {% endwith %}
 {% else %}
     <p>No search matches</p>
