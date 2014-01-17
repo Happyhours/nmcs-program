@@ -1,14 +1,14 @@
-{{ object.pk }}
-{{ object.first_name }}
-{{ object.last_name }}
-{{ object.street }}
-{{ object.email }}
-{{ object.postal.postal }}
-{{ object.postal.city }}
-{{ object.postal.postal }}
-{{ object.postal.city }}
+{{ customer_detail.pk }}
+{{ customer_detail.first_name }}
+{{ customer_detail.last_name }}
+{{ customer_detail.street }}
+{{ customer_detail.email }}
+{{ customer_detail.postal.postal }}
+{{ customer_detail.postal.city }}
+{{ customer_detail.postal.postal }}
+{{ customer_detail.postal.city }}
 
 
-{% for telephone in object.telephone_set.all %}
+{% for telephone in customer_detail.telephone_set.all %}
     {{ telephone.number }}
 {% endfor %}
