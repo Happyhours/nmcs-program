@@ -1,0 +1,23 @@
+<form action="{% url 'customer-list' %}" method="GET">
+    <input type="text" name="q" />
+    <button type="submit">search</button>
+</form>
+{% if customer_list %}
+    {% with customer_list|first as customer %}
+        {{ customer.pk }}
+        {{ customer.first_name }}
+        {{ customer.last_name }}
+        {{ customer.street }}
+        {{ customer.email }}
+        {{ customer.postal.postal }}
+        {{ customer.postal.city }}
+        {{ customer.postal.postal }}
+        {{ customer.postal.city }}
+
+        {% for telephone in customer.telephone_set.all %}
+            {{ telephone.number }}
+        {% endfor %}
+    {% endwith %}
+{% else %}
+    <p>No search matches</p>
+{% endif %}
