@@ -4,7 +4,10 @@
 </form>
 
 {% if customer_list %}
-    {% with customer_list|first as customer %}
+
+    {% for customer in customer_list %}
+
+    <p>
         {{ customer.first_name }}
         {{ customer.last_name }}
 
@@ -17,7 +20,10 @@
         {% with customer.mc_set.all|first as mc %}
             {{ mc.registration_nr }}
         {% endwith %}
-    {% endwith %}
+    {% endfor%}
+    </p>
+
+
 {% else %}
     <p>No search matches</p>
 {% endif %}

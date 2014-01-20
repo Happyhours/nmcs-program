@@ -21,17 +21,18 @@ class CustomerListView(generic.ListView):
     def get_queryset(self):
         # Fetch queryset from the parent(ListView) get_queryset.
         queryset = super(CustomerListView, self).get_queryset()
-
+        
         # Get the q GET parameter
         q = self.request.GET.get("q")
         if q:
             # Return a filtered queryset
-            return queryset.filter(
+           return queryset.filter(
                 Q(first_name__icontains=q) |
                 Q(last_name__icontains=q) |
-                Q(email__icontains=q)
+                Q(email__icontains=q) |
+                Q(mc__registration_nr__icontains=q),
+                mc__active=True
             )
-
         else:
             queryset = []
             return queryset
