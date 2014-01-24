@@ -15,6 +15,12 @@ urlpatterns = patterns('',
         name='customer-list'
 
     ),
+    url(
+        r"^add$",
+        views.addView,
+        name='customer-add'
+
+    ),
 
 
 
