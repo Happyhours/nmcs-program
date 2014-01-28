@@ -1,25 +1,31 @@
-{{ customer_detail.pk }}
-{{ customer_detail.first_name }}
-{{ customer_detail.last_name }}
-{{ customer_detail.street }}
-{{ customer_detail.email }}
-{{ customer_detail.postal.postal }}
-{{ customer_detail.postal.city }}
-{{ customer_detail.postal.postal }}
-{{ customer_detail.postal.city }}
+{% extends "base_customer.html" %}
+
+{% block content %}
+
+    {{ customer_detail.pk }}
+    {{ customer_detail.first_name }}
+    {{ customer_detail.last_name }}
+    {{ customer_detail.street }}
+    {{ customer_detail.email }}
+    {{ customer_detail.postal.postal }}
+    {{ customer_detail.postal.city }}
+    {{ customer_detail.postal.postal }}
+    {{ customer_detail.postal.city }}
 
 
-{% for telephone in customer_detail.telephone_set.all %}
-    {{ telephone.number }}
-{% endfor %}
+    {% for telephone in customer_detail.telephone_set.all %}
+        {{ telephone.number }}
+    {% endfor %}
 
-{% for mc in customer_detail.mc_set.all %}
-    {{ mc.pk }}
-    {{ mc.active }}
-    {{ mc.removed }}
-    {{ mc.year }}
-    {{ mc.motor }}
-    {{ mc.km }}
-    {{ mc.model.model }}
-    {{ mc.model.brand }}
-{% endfor %}
+    {% for mc in customer_detail.mc_set.all %}
+        {{ mc.pk }}
+        {{ mc.active }}
+        {{ mc.removed }}
+        {{ mc.year }}
+        {{ mc.motor }}
+        {{ mc.km }}
+        {{ mc.model.model }}
+        {{ mc.model.brand }}
+    {% endfor %}
+
+{% endblock%}

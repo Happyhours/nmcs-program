@@ -1,34 +1,85 @@
 {% extends "base_search.html" %}
 
 {% block content %}
+<div class="row">
+    <div class="col-md-6 col-md-offset-3">
+        <form class="form-horizontal" role="form" action="{% url 'customer-list' %}" method="GET"> 
+            <div class="input-group">
+              <input type="text" class="form-control" name="q">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="submit">Sök!</button>
+              </span>
+            </div><!-- /input-group -->
+        </form>
+    </div><!-- /.col-md-6 col-md-offset-3" -->
 
-    <form action="{% url 'customer-list' %}" method="GET">
-        <input type="text" name="q" />
-        <button type="submit">search</button>
-    </form>
+    <div class="col-md-12">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Namn</th>
+                        <th>Telefon</th>
+                        <th>Email</th>
+                        <th>Regnr</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% if customer_list %}
+                    {% for customer in customer_list %}
+                    
+                    <tr class="success">
+                        <td>
+                            <a href="{% url 'customer-detail' customer.pk %}">
+                                {{ customer.first_name }} {{ customer.last_name }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'customer-detail' customer.pk %}">
+                                {% with customer.telephone_set.all|first as telephone %}
+                                    {{ telephone.number }}
+                                {% endwith %}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'customer-detail' customer.pk %}">
+                                {{ customer.email }}
+                            </a>
+                        </td>
+                        <td>
+                            <a href="{% url 'customer-detail' customer.pk %}">
+                                {% with customer.mc_set.all|first as mc %}
+                                    {{ mc.registration_nr }}
+                                {% endwith %}
+                            </a>
+                        </td>         
+                    </tr>
+                   
+                    {% endfor%}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" style="text-align: center;">
+                            Sökningen gav {{ customer_list.count }} träffar!
+                        </td> 
+                    </tr>
+                </tfoot>
+                {% else %}
+                <!--
+                <tfoot>
+                    <tr class="danger">
+                        <td colspan="4" style="text-align: center;">
+                            Sökningen gav 0 träffar!
+                        </td> 
+                    </tr>
+                </tfoot>
+                -->
+                {% endif %}
+                
 
-    {% if customer_list %}
-
-        {% for customer in customer_list %}
-        <p>
-            {{ customer.first_name }}
-            {{ customer.last_name }}
-
-            {% with customer.telephone_set.all|first as telephone %}
-                {{ telephone.number }}
-            {% endwith %}
-            
-            {{ customer.email }}
-
-            {% with customer.mc_set.all|first as mc %}
-                {{ mc.registration_nr }}
-            {% endwith %}
-        </p>
-        {% endfor%}
-
-
-    {% else %}
-        <p>No search matches</p>
-    {% endif %}
+            </table>
+        </div>            
+    </div><!-- /.col-md-12" -->
+</div><!-- /.row -->
 
 {% endblock%}

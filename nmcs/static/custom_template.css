@@ -5,3 +5,14 @@ body {
   padding: 15px;
   text-align: center;
 }
+
+
+td a { 
+   display: block;
+}
+td a:hover { 
+   text-decoration:none;
+}
+td a:active { 
+   text-decoration:none;
+}
