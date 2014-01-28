@@ -2,7 +2,14 @@
 
 {% block title %}Search Page{% endblock%}
 
+{% block navbar %}
+apa
+{% endblock %}
+
 {% block main %}
+
+    TODO ADD A ROW CONTAINER ETC!!!
+
     <form action="{% url 'customer-list' %}" method="GET">
         <input type="text" name="q" />
         <button type="submit">search</button>
