@@ -1,14 +1,6 @@
-{% extends "base.html" %}
+{% extends "base_search.html" %}
 
-{% block title %}Search Page{% endblock%}
-
-{% block navbar %}
-apa
-{% endblock %}
-
-{% block main %}
-
-    TODO ADD A ROW CONTAINER ETC!!!
+{% block content %}
 
     <form action="{% url 'customer-list' %}" method="GET">
         <input type="text" name="q" />
@@ -18,7 +10,6 @@ apa
     {% if customer_list %}
 
         {% for customer in customer_list %}
-
         <p>
             {{ customer.first_name }}
             {{ customer.last_name }}
@@ -32,10 +23,12 @@ apa
             {% with customer.mc_set.all|first as mc %}
                 {{ mc.registration_nr }}
             {% endwith %}
-        {% endfor%}
         </p>
+        {% endfor%}
+
 
     {% else %}
         <p>No search matches</p>
     {% endif %}
+
 {% endblock%}

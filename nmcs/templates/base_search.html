@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}Search Page{% endblock %}
+
+{% block navbar %}{% endblock %}
+
+{% block left-column-2 %}
+  <ul class="nav nav-pills nav-stacked">
+    <li class="active"><a href="{% url 'customer-list' %}" >Sök</a></li>
+    <li><a href="{% url 'customer-detail' 1 %}">Kund</a></li>
+    <li><a href="{% url 'customer-detail' 1 %}">Lägg till</a></li>
+  </ul>
+{% endblock %}
+
+{% block right-column-10 %}
+  <div class="tab-content">
+    <div class="tab-pane active" id="Sök">
+      {% block content %}
+        Skeleton content
+      {% endblock %}
+    </div><!-- /.tab-pane -->
+  </div><!-- /.tab-content -->
+{% endblock %}
