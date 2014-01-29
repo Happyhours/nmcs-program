@@ -48,7 +48,7 @@ def addView(request):
         mc_form = McForm(request.POST, prefix='mc')
         model_form = ModelForm(request.POST, prefix='model')
 
-        print(request.POST)
+        # print(request.POST)
         if (request.POST['mc-registration_nr'] == '' and 
             request.POST['mc-year'] == '' and
             request.POST['mc-motor'] == '' and
@@ -81,8 +81,8 @@ def addView(request):
                             telephone.customer = customer
                             telephone.save()
 
-
                     return HttpResponseRedirect('add')
+
         else:
             if mc_form.is_valid() and customer_form.is_valid() and postal_form.is_valid() and model_form.is_valid() and telephone_forms.is_valid():
 

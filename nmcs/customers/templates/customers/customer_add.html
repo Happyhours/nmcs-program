@@ -4,10 +4,13 @@
 
 <form class="form-horizontal" role="form" action="{% url 'customer-add' %}" method="POST">{% csrf_token %}
 
+        {{ postal.as_table }}
+
 
     <div class="col-md-6">
         {% for fields in customer %}
         <div class="form-group">
+
             <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
             <div class="col-md-8">
             {% if fields.max_length %}
@@ -15,6 +18,7 @@
             {% else %}
                 <input type="text" class="form-control" id="{{ fields.id_for_label }}" name="{{ fields.html_name }}" >
             {% endif %}
+            {{ fields.errors }}
             </div>
         </div>
         {% endfor %}
@@ -32,6 +36,7 @@
         </div>
         {% endfor %}
 
+        {{ telephones.management_form }}
         {% for telephone in telephones %}
             {% for fields in telephone %}
             <div class="form-group">
@@ -80,7 +85,8 @@
 
     <div class="form-group">
         <div class="col-md-offset-10 col-md-2">
-            <button type="submit" class="btn btn-default">Add</button>
+            <input type="submit" value="Submit" />
+            <button type="submit" value="Submit" class="btn btn-default">Add</button>
             <a class="btn btn-default" href="{% url 'customer-add' %}" role="button">Clear</a>
         </div>
     </div>  
