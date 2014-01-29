@@ -2,21 +2,89 @@
 
 {% block content %}
 
-    <form action="{% url 'customer-add' %}" method="POST">{% csrf_token %}
-          
-        {{ customer.as_p }}
-    --------------------------------------------------------------------------------
-        {{ postal.as_p }}
-    --------------------------------------------------------------------------------
+<form class="form-horizontal" role="form" action="{% url 'customer-add' %}" method="POST">{% csrf_token %}
 
-        {{ telephones.as_p }}
 
-    --------------------------------------------------------------------------------
-        {{ mc.as_p }}
-    --------------------------------------------------------------------------------
-        {{ model.as_p }}
+    <div class="col-md-6">
+        {% for fields in customer %}
+        <div class="form-group">
+            <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
+            <div class="col-md-8">
+            {% if fields.max_length %}
+                <input type="text" class="form-control" id="{{ fields.id_for_label }}" name="{{ fields.html_name }}" maxlength="{{ fields.max_length }}">
+            {% else %}
+                <input type="text" class="form-control" id="{{ fields.id_for_label }}" name="{{ fields.html_name }}" >
+            {% endif %}
+            </div>
+        </div>
+        {% endfor %}
 
-        <button type="submit">Add</button>
-    </form>
+        {% for fields in postal %}
+        <div class="form-group">
+            <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
+            <div class="col-md-8">
+            {% if fields.max_length %}
+                <input type="text" class="form-control" id="{{ fields.id_for_label }}" name="{{ fields.html_name }}" maxlength="{{ fields.max_length }}">
+            {% else %}
+                <input type="text" class="form-control" id="{{ fields.id_for_label }}" name="{{ fields.html_name }}" >
+            {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        {% for telephone in telephones %}
+            {% for fields in telephone %}
+            <div class="form-group">
+                <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}{{ forloop.parentloop.counter }}</label>
+                <div class="col-md-8">
+                {% if fields.max_length %}
+                    <input type="text" class="form-control" id="{{ fields.id_for_label }}" name="{{ fields.html_name }}" maxlength="{{ fields.max_length }}">
+                {% else %}
+                    <input type="text" class="form-control" id="{{ fields.id_for_label }}" name="{{ fields.html_name }}" >
+                {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% endfor %}
+    </div><!-- /.col-md-6 col-md-offset-3" -->
+
+    <div class="col-md-6">
+        {% for fields in mc %}
+        <div class="form-group">
+            <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
+            <div class="col-md-8">
+            {% if fields.max_length %}
+                <input type="text" class="form-control" id="{{ fields.id_for_label }}" name="{{ fields.html_name }}" maxlength="{{ fields.max_length }}">
+            {% else %}
+                <input type="text" class="form-control" id="{{ fields.id_for_label }}" name="{{ fields.html_name }}" >
+            {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+
+        {% for fields in model %}
+        <div class="form-group">
+            <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
+            <div class="col-md-8">
+            {% if fields.max_length %}
+                <input type="text" class="form-control" id="{{ fields.id_for_label }}" name="{{ fields.html_name }}" maxlength="{{ fields.max_length }}">
+            {% else %}
+                <input type="text" class="form-control" id="{{ fields.id_for_label }}" name="{{ fields.html_name }}" >
+            {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div><!-- /.col-md-6 col-md-offset-3" -->
+
+    
+
+    <div class="form-group">
+        <div class="col-md-offset-10 col-md-2">
+            <button type="submit" class="btn btn-default">Add</button>
+            <a class="btn btn-default" href="{% url 'customer-add' %}" role="button">Clear</a>
+        </div>
+    </div>  
+</form>
+
     
 {% endblock %}
