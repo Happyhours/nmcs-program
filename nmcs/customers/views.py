@@ -6,47 +6,27 @@ from django.forms.formsets import formset_factory
 
 # Create your views here.
 from .models import Customer, Postal, Model
-from .forms import CustomerForm, McForm, PostalForm, TelephoneForm, ModelForm
+from .forms import CustomerForm, McForm, PostalForm, TelephoneForm, ModelForm, PostalFormNormal, ModelFormNormal
 
-def sanitizePostal(postal, city):
-    #Ta bort whitespaces från postal input
-    postal = ''.join(postal.split())
-    postal = postal.strip()
-    #Lowercase pa city
-    city = city.capitalize()
-
-    return [postal, city]
-
-def sanitizeModel(model, brand):
-    model = ''.join(model.split())
-    model = model.strip()
-    model = model.title()
-
-    brand = ''.join(brand.split())
-    brand = brand.strip()
-    brand = brand.capitalize()
-
-    return [model, brand]
-
-def sanitizeTelephone(number):
-    number = ''.join(number.split())
-    number = number.strip()
-    #number.isalnum()
-
-    return number
 
 def addView(request):
 
     #Formset for telephone
-    TelephoneFormSet = formset_factory(TelephoneForm, extra=2)
+    TelephoneFormSet = formset_factory(TelephoneForm, extra=1)
 
     if request.method == "POST":
 
         customer_form = CustomerForm(request.POST, prefix='customer')
-        postal_form = PostalForm(request.POST, prefix='postal')
+        postal_form_normal = PostalFormNormal(request.POST, prefix='postal')
         telephone_forms = TelephoneFormSet(request.POST, prefix='telephone')
+        telephone_form1 = TelephoneForm(request.POST, prefix='telephone1')
         mc_form = McForm(request.POST, prefix='mc')
-        model_form = ModelForm(request.POST, prefix='model')
+        model_form_normal = ModelFormNormal(request.POST, prefix='model')
+
+
+
+        model_form = ModelForm()
+        postal_form = PostalForm()
 
         # print(request.POST)
         if (request.POST['mc-registration_nr'] == '' and 
@@ -56,22 +36,24 @@ def addView(request):
             request.POST['model-model'] == '' and 
             request.POST['model-brand'] == ''):
 
-                if customer_form.is_valid() and postal_form.is_valid() and telephone_forms.is_valid():
-
-                    postal_sanitized = sanitizePostal(postal_form.cleaned_data['postal'],
-                                postal_form.cleaned_data['city'])
+                if customer_form.is_valid() and postal_form_normal.is_valid() and telephone_forms.is_valid() and telephone_form1.is_valid():
 
                     try: 
-                        postal = Postal.objects.get(postal=postal_sanitized[0])
+                        postal = Postal.objects.get(postal=postal_form_normal.cleaned_data['postal'])
                     except Postal.DoesNotExist:
                         postal = postal_form.save(commit=False)
-                        postal.postal = postal_sanitized[0]
-                        postal.city = postal_sanitized[1]
+                        postal.postal = postal_form_normal.cleaned_data['postal']
+                        postal.city = postal_form_normal.cleaned_data['city']
                         postal.save()
 
                     customer = customer_form.save(commit=False)
                     customer.postal = postal
                     customer.save()
+
+                    telephone1 = telephone_form1.save(commit=False)
+                    telephone1.number = telephone_form1.cleaned_data['number']
+                    telephone1.customer = customer
+                    telephone1.save()
 
                     for telephones in telephone_forms:
                         if not telephones.cleaned_data == {}:
@@ -82,41 +64,42 @@ def addView(request):
                             telephone.save()
 
                     return HttpResponseRedirect('add')
+                else:
+                    mc_form = McForm(prefix='mc')
+                    model_form_normal = ModelFormNormal(prefix='model')
 
         else:
-            if mc_form.is_valid() and customer_form.is_valid() and postal_form.is_valid() and model_form.is_valid() and telephone_forms.is_valid():
-
-                postal_sanitized = sanitizePostal(postal_form.cleaned_data['postal'],
-                            postal_form.cleaned_data['city'])
-
-                model_sanitized = sanitizeModel(model_form.cleaned_data['model'],
-                            model_form.cleaned_data['brand'])
+            if mc_form.is_valid() and customer_form.is_valid() and postal_form_normal.is_valid() and model_form_normal.is_valid() and telephone_forms.is_valid() and telephone_form1.is_valid():
 
                 try: 
-                    postal = Postal.objects.get(postal=postal_sanitized[0])
+                    postal = Postal.objects.get(postal=postal_form_normal.cleaned_data['postal'])
                 except Postal.DoesNotExist:
                     postal = postal_form.save(commit=False)
-                    postal.postal = postal_sanitized[0]
-                    postal.city = postal_sanitized[1]
+                    postal.postal = postal_form_normal.cleaned_data['postal']
+                    postal.city = postal_form_normal.cleaned_data['city']
                     postal.save()
 
                 try: 
-                    model = Model.objects.get(model=model_sanitized[0])
+                    model = Model.objects.get(model=model_form_normal.cleaned_data['model'])
                 except Model.DoesNotExist:
                     model = model_form.save(commit=False)
-                    model.model = model_sanitized[0]
-                    model.brand = model_sanitized[1]
+                    model.model = model_form_normal.cleaned_data['model']
+                    model.brand = model_form_normal.cleaned_data['brand']
                     model.save()
 
                 customer = customer_form.save(commit=False)
                 customer.postal = postal
                 customer.save()
 
+                telephone1 = telephone_form1.save(commit=False)
+                telephone1.number = telephone_form1.cleaned_data['number']
+                telephone1.customer = customer
+                telephone1.save()
+
                 for telephones in telephone_forms:
                     if not telephones.cleaned_data == {}:   
-                        telephone_sanitized = sanitizeTelephone(telephones.cleaned_data['number'])
                         telephone = telephones.save(commit=False)
-                        telephone.number = telephone_sanitized
+                        telephone.number = telephones.cleaned_data['number']
                         telephone.customer = customer
                         telephone.save()
 
@@ -130,14 +113,15 @@ def addView(request):
 
     else:
         customer_form = CustomerForm(prefix='customer')
-        postal_form = PostalForm(prefix='postal')
+        postal_form_normal = PostalFormNormal(prefix='postal')
+        telephone_form1 = TelephoneForm(prefix='telephone1')
         telephone_forms = TelephoneFormSet(prefix='telephone')
         mc_form = McForm(prefix='mc')
-        model_form = ModelForm(prefix='model')
+        model_form_normal = ModelFormNormal(prefix='model')
 
     return render(request, 'customers/customer_add.html', 
-        {'customer': customer_form, 'mc': mc_form, 'postal': postal_form,
-        'model': model_form, 'telephones': telephone_forms })
+        {'customer': customer_form, 'mc': mc_form, 'postal': postal_form_normal,
+        'model': model_form_normal, 'telephones': telephone_forms, 'telephone1': telephone_form1 })
 
 
 class CustomerDetailView(generic.DetailView):
@@ -159,12 +143,11 @@ class CustomerListView(generic.ListView):
         q = self.request.GET.get("q")
         if q:
             # Return a filtered queryset
-           return queryset.filter(
+            return queryset.filter(
                 Q(first_name__icontains=q) |
                 Q(last_name__icontains=q) |
                 Q(email__icontains=q) |
-                Q(mc__registration_nr__icontains=q),
-                mc__active=True
+                Q(mc__registration_nr__icontains=q)
             )
         else:
             queryset = []
