@@ -1,18 +1,17 @@
 body {
   padding-top: 100px;
 }
-.starter-template {
-  padding: 15px;
-  text-align: center;
+.search-table-div {
+
+    overflow-y: auto;
+    height: 500px; 
 }
-
-
-td a { 
+.search-table-div td a { 
    display: block;
 }
-td a:hover { 
+.search-table-div td a:hover { 
    text-decoration:none;
 }
-td a:active { 
+.search-table-div td a:active { 
    text-decoration:none;
 }

@@ -16,7 +16,7 @@ urlpatterns = patterns('',
 
     ),
     url(
-        r"^add$",
+        r"^add",
         views.addView,
         name='customer-add'
 

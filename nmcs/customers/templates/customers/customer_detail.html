@@ -1,31 +1,42 @@
 {% extends "base_customer.html" %}
 
 {% block content %}
+<div class="panel-body">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            {{ customer_detail.pk }}
+            {{ customer_detail.first_name }}
+            {{ customer_detail.last_name }}
+            {{ customer_detail.street }}
+            {{ customer_detail.email }}
+            {{ customer_detail.postal.postal }}
+            {{ customer_detail.postal.city }}
+            {{ customer_detail.postal.postal }}
+            {{ customer_detail.postal.city }}
 
-    {{ customer_detail.pk }}
-    {{ customer_detail.first_name }}
-    {{ customer_detail.last_name }}
-    {{ customer_detail.street }}
-    {{ customer_detail.email }}
-    {{ customer_detail.postal.postal }}
-    {{ customer_detail.postal.city }}
-    {{ customer_detail.postal.postal }}
-    {{ customer_detail.postal.city }}
 
+            {% for telephone in customer_detail.telephone_set.all %}
+                {{ telephone.number }}
+            {% endfor %}
 
-    {% for telephone in customer_detail.telephone_set.all %}
-        {{ telephone.number }}
-    {% endfor %}
+            {% for mc in customer_detail.mc_set.all %}
+                {{ mc.pk }}
+                {{ mc.active }}
+                {{ mc.removed }}
+                {{ mc.year }}
+                {{ mc.motor }}
+                {{ mc.km }}
+                {{ mc.model.model }}
+                {{ mc.model.brand }}
+            {% endfor %}          
 
-    {% for mc in customer_detail.mc_set.all %}
-        {{ mc.pk }}
-        {{ mc.active }}
-        {{ mc.removed }}
-        {{ mc.year }}
-        {{ mc.motor }}
-        {{ mc.km }}
-        {{ mc.model.model }}
-        {{ mc.model.brand }}
-    {% endfor %}
+        </div><!-- /.col-md-6 col-md-offset-3" -->
+    </div><!-- /.row -->
+</div><!-- /.panel-body-->
+
+<div class="panel-footer">
+    <p class="text-center">...</p>
+</div><!-- /.panel-footer--> 
+
 
 {% endblock%}

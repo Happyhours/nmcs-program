@@ -2,116 +2,147 @@
 
 {% block content %}
 
+<div class="panel-body">
 
+    {% if success %}
+    <div class="alert alert-success alert-dismissable">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+        <p class="text-center">
+            <strong>Insättning lyckades! </strong>
+        </p>
+    </div>
+    {% endif %}
+    
 
-<form class="form-horizontal" role="form" action="{% url 'customer-add' %}" method="POST">{% csrf_token %}
+    <form class="form-horizontal" role="form" action="{% url 'customer-add' %}" method="POST">{% csrf_token %}
+        <div class="col-md-6">
 
-
-    <div class="col-md-6">
-        
-        {% for fields in customer %}
-            {% if fields.errors %}
-                <div class="form-group has-error">
-            {% else %}
-                <div class="form-group">
-            {% endif %}
-            <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
-            <div class="col-md-8">
-            {{ fields }}
-            {{ fields.errors }}
+            <div class="page-header">
+                <h1>Kund</h1>
             </div>
-        </div>
-        {% endfor %}
-        
-
-        {% for fields in postal %}
-            {% if fields.errors %}
-                <div class="form-group has-error">
-            {% else %}
-                <div class="form-group">
-            {% endif %}        
-            <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
-            <div class="col-md-8">
-            {{ fields }}
-            {{ fields.errors }}
-            </div>
-        </div>
-        {% endfor %}
 
 
 
-        {% for fields in telephone1 %}
-            {% if fields.errors %}
-                <div class="form-group has-error">
-            {% else %}
-                <div class="form-group">
-            {% endif %}        
-            <label for="{{ fields.id_for_label }}" class="col-md-4 control-label"> Mobil </label>
-            <div class="col-md-8">
-            {{ fields }}
-            {{ fields.errors }}
-            </div>
-        </div>
-        {% endfor %}
-
-
-        {{ telephones.management_form }}
-        {% for telephone in telephones %}
-            {% for fields in telephone %}
+            {% for fields in customer %}
                 {% if fields.errors %}
                     <div class="form-group has-error">
                 {% else %}
                     <div class="form-group">
                 {% endif %}
-                <label for="{{ fields.id_for_label }}" class="col-md-4 control-label"> Telefon </label>
+                <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
                 <div class="col-md-8">
                 {{ fields }}
-                {{ fields.errors }}
+                {% for error in fields.errors %}
+                    <strong>{{ error|escape }}</strong>
+                {% endfor %}
                 </div>
-            </div>            
+            </div>
             {% endfor %}
-        {% endfor %}
-    </div><!-- /.col-md-6 col-md-offset-3" -->
-
-    <div class="col-md-6">
-        {% for fields in mc %}
-            {% if fields.errors %}
-                <div class="form-group has-error">
-            {% else %}
-                <div class="form-group">
-            {% endif %}
-            <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
-            <div class="col-md-8">
-            {{ fields }}
-            {{ fields.errors }}
+            
+            {% for fields in postal %}
+                {% if fields.errors %}
+                    <div class="form-group has-error">
+                {% else %}
+                    <div class="form-group">
+                {% endif %}        
+                <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
+                <div class="col-md-8">
+                {{ fields }}
+                {% for error in fields.errors %}
+                    <strong>{{ error|escape }}</strong>
+                {% endfor %}
+                </div>
             </div>
-        </div>
-        {% endfor %}
+            {% endfor %}
 
-        {% for fields in model %}
-            {% if fields.errors %}
-                <div class="form-group has-error">
-            {% else %}
-                <div class="form-group">
-            {% endif %}
-            <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
-            <div class="col-md-8">
-            {{ fields }}
-            {{ fields.errors }}
+            {% for fields in telephone1 %}
+                {% if fields.errors %}
+                    <div class="form-group has-error">
+                {% else %}
+                    <div class="form-group">
+                {% endif %}        
+                <label for="{{ fields.id_for_label }}" class="col-md-4 control-label"> Mobil </label>
+                <div class="col-md-8">
+                {{ fields }}
+                {% for error in fields.errors %}
+                    <strong>{{ error|escape }}</strong>
+                {% endfor %}
+                </div>
             </div>
-        </div>
-        {% endfor %}
-    </div><!-- /.col-md-6 col-md-offset-3" -->
+            {% endfor %}
 
-    
+            {{ telephones.management_form }}
+            {% for telephone in telephones %}
+                {% for fields in telephone %}
+                    {% if fields.errors %}
+                        <div class="form-group has-error">
+                    {% else %}
+                        <div class="form-group">
+                    {% endif %}
+                    <label for="{{ fields.id_for_label }}" class="col-md-4 control-label"> Telefon </label>
+                    <div class="col-md-8">
+                    {{ fields }}
+                    {% for error in fields.errors %}
+                        <strong>{{ error|escape }}</strong>
+                    {% endfor %}
+                    </div>
+                </div>            
+                {% endfor %}
+            {% endfor %}
+        </div><!-- /.col-md-6 col-md-offset-3" -->
 
-    <div class="form-group">
-        <div class="col-md-offset-10 col-md-2">
-            <button type="submit" value="Submit" class="btn btn-default">Add</button>
-            <a class="btn btn-default" href="{% url 'customer-add' %}" role="button">Clear</a>
-        </div>
-    </div>  
-</form>
+        <div class="col-md-6">
 
+            <div class="page-header">
+                <h1>Motorcykel <small>valfritt</small></h1>
+            </div>
+
+            {% for fields in mc %}
+                {% if fields.errors %}
+                    <div class="form-group has-error">
+                {% else %}
+                    <div class="form-group">
+                {% endif %}
+                <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
+                <div class="col-md-8">
+                {{ fields }}
+                {% for error in fields.errors %}
+                    <strong>{{ error|escape }}</strong>
+                {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+
+            {% for fields in model %}
+                {% if fields.errors %}
+                    <div class="form-group has-error">
+                {% else %}
+                    <div class="form-group">
+                {% endif %}
+                <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
+                <div class="col-md-8">
+                {{ fields }}
+                {% for error in fields.errors %}
+                    <strong>{{ error|escape }}</strong>
+                {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div><!-- /.col-md-6 col-md-offset-3" -->
+
+        <div class="form-group">
+            <div class="col-md-offset-10 col-md-2">
+                <button type="submit" value="Submit" class="btn btn-default">Add</button>
+                <a class="btn btn-default" href="{% url 'customer-add' %}" role="button">Clear</a>
+            </div>
+        </div>  
+    </form>
+
+</div><!-- /.panel-body-->
+
+
+<div class="panel-footer">
+    <p class="text-center"></p>
+</div><!-- /.panel-footer--> 
     
 {% endblock %}

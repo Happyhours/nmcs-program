@@ -14,6 +14,8 @@ def addView(request):
     #Formset for telephone
     TelephoneFormSet = formset_factory(TelephoneForm, extra=1)
 
+    success = False
+
     if request.method == "POST":
 
         customer_form = CustomerForm(request.POST, prefix='customer')
@@ -56,14 +58,13 @@ def addView(request):
                     telephone1.save()
 
                     for telephones in telephone_forms:
-                        if not telephones.cleaned_data == {}:
-                            telephone_sanitized = sanitizeTelephone(telephones.cleaned_data['number'])
+                        if not telephones.cleaned_data == {}:   
                             telephone = telephones.save(commit=False)
-                            telephone.number = telephone_sanitized
+                            telephone.number = telephones.cleaned_data['number']
                             telephone.customer = customer
                             telephone.save()
 
-                    return HttpResponseRedirect('add')
+                    return HttpResponseRedirect('add/?success=True')
                 else:
                     mc_form = McForm(prefix='mc')
                     model_form_normal = ModelFormNormal(prefix='model')
@@ -109,9 +110,12 @@ def addView(request):
                 mc.model = model
                 mc.save()
 
-                return HttpResponseRedirect('add')
+                return HttpResponseRedirect('add/?success=True')
 
     else:
+        if request.GET.get('success'):
+            success = True
+
         customer_form = CustomerForm(prefix='customer')
         postal_form_normal = PostalFormNormal(prefix='postal')
         telephone_form1 = TelephoneForm(prefix='telephone1')
@@ -121,7 +125,7 @@ def addView(request):
 
     return render(request, 'customers/customer_add.html', 
         {'customer': customer_form, 'mc': mc_form, 'postal': postal_form_normal,
-        'model': model_form_normal, 'telephones': telephone_forms, 'telephone1': telephone_form1 })
+        'model': model_form_normal, 'telephones': telephone_forms, 'telephone1': telephone_form1, 'success': success })
 
 
 class CustomerDetailView(generic.DetailView):
@@ -142,6 +146,8 @@ class CustomerListView(generic.ListView):
         # Get the q GET parameter
         q = self.request.GET.get("q")
         if q:
+            # Set attribute search to indicate custom search
+            self.search = True
             # Return a filtered queryset
             return queryset.filter(
                 Q(first_name__icontains=q) |
@@ -150,5 +156,13 @@ class CustomerListView(generic.ListView):
                 Q(mc__registration_nr__icontains=q)
             )
         else:
-            queryset = []
+            # Set attribute search to False to indicate no custom search
+            self.search = False
             return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(CustomerListView, self).get_context_data(**kwargs)
+        # Add boolean search atrribute from get_queryset() to context
+        context['search'] = self.search
+
+        return context
