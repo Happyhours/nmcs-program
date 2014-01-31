@@ -149,12 +149,13 @@ class CustomerListView(generic.ListView):
             # Set attribute search to indicate custom search
             self.search = True
             # Return a filtered queryset
+            # eg (A OR B OR C) OR (D AND E)
             return queryset.filter(
                 Q(first_name__icontains=q) |
                 Q(last_name__icontains=q) |
                 Q(email__icontains=q) |
                 Q(mc__registration_nr__icontains=q)
-            )
+            ).distinct()
         else:
             # Set attribute search to False to indicate no custom search
             self.search = False
@@ -166,3 +167,4 @@ class CustomerListView(generic.ListView):
         context['search'] = self.search
 
         return context
+

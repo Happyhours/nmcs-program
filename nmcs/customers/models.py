@@ -20,6 +20,9 @@ class Customer(models.Model):
     def __str__(self):
         return self.first_name
 
+    class Meta:
+        ordering = ['first_name']
+        pass
 
 class Telephone(models.Model):
     number = models.CharField(max_length=50)
