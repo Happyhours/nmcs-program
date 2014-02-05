@@ -2,6 +2,7 @@ from django import forms
 
 from .models import Customer, Mc, Postal, Telephone, Model
 
+
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
@@ -94,6 +95,7 @@ class McForm(forms.ModelForm):
                 raise forms.ValidationError("Använd bara nummer.")
 
         return data
+
 
 class PostalForm(forms.ModelForm):
     class Meta:
@@ -223,3 +225,16 @@ class ModelFormNormal(forms.Form):
             data = data.title()
 
         return data
+
+class ActiveMcForm(forms.Form):
+    active_mc = forms.ModelChoiceField(queryset=Customer.objects.none(),
+            required=True,
+            empty_label=None,
+            widget = forms.Select(attrs={'class': 'form-control', 'size': '5'})
+    )
+
+    def __init__(self, customer_pk, *args, **kwargs):
+        super(ActiveMcForm, self).__init__(*args, **kwargs)
+        customer = Customer.objects.get(pk=customer_pk)
+        customer_mcs = customer.mc_set.all()
+        self.fields['active_mc'].queryset=customer_mcs

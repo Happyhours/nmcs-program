@@ -1,5 +1,13 @@
 from django.db import models
 
+# Managers
+
+class CustomerManager(models.Manager):
+
+    def get_active_mc(self):
+        return self.all()
+
+
 # Create your models here.
 
 class Postal(models.Model):
@@ -16,6 +24,30 @@ class Customer(models.Model):
     email = models.EmailField()
     street = models.CharField(max_length=100)
     postal = models.ForeignKey(Postal)
+
+    objects = CustomerManager()
+
+    def get_active_mc(self):
+        customer = Customer.objects.get(pk=self.pk)
+        try:
+            return customer.mc_set.get(active=True)
+        except Mc.DoesNotExist:
+            print("No active mc exists for this customer")
+            return []
+
+    def update_active_mc(self, mc_object):
+        # Get and Set active mc to false and save to db.
+        current_active_mc = self.get_active_mc()
+        current_active_mc.active = False
+        current_active_mc.save()
+
+        # Set selected mc to ahve active True and save to db.
+        new_active_mc = mc_object
+        new_active_mc.active = True
+        new_active_mc.save()
+
+        # TODO add True or false or error exeption
+
 
     def __str__(self):
         return self.first_name
@@ -52,6 +84,7 @@ class Mc(models.Model):
 
     def __str__(self):
         return self.registration_nr
+
 
 
 

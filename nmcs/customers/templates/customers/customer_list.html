@@ -58,9 +58,10 @@
                     </td>
                     <td>
                         <a href="{% url 'customer-detail' customer.pk %}">
-                            {% with customer.mc_set.all|first as mc %}
-                                {{ mc.registration_nr }}
-                            {% endwith %}
+                            {% if customer.get_active_mc %}
+                                {{ customer.get_active_mc }}
+                            {% endif %}
+
                         </a>
                     </td>         
                 </tr>

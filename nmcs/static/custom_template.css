@@ -15,3 +15,12 @@ body {
 .search-table-div td a:active { 
    text-decoration:none;
 }
+.dl-horizontal dt{
+    text-align: left;
+    margin-bottom: 0.5em;
+    padding-right: 1em;
+    width: 100px;
+}
+.dl-horizontal dd{
+    margin-left: 0;
+}

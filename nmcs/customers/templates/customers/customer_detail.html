@@ -1,37 +1,108 @@
 {% extends "base_customer.html" %}
 
+{% load webdesign %}
+
 {% block content %}
 <div class="panel-body">
     <div class="row">
-        <div class="col-md-6 col-md-offset-3">
-            {{ customer_detail.pk }}
-            {{ customer_detail.first_name }}
-            {{ customer_detail.last_name }}
-            {{ customer_detail.street }}
-            {{ customer_detail.email }}
-            {{ customer_detail.postal.postal }}
-            {{ customer_detail.postal.city }}
-            {{ customer_detail.postal.postal }}
-            {{ customer_detail.postal.city }}
 
+        <div class="col-md-4">
 
-            {% for telephone in customer_detail.telephone_set.all %}
-                {{ telephone.number }}
-            {% endfor %}
+            <div class="page-header">
+                <h1>Kund</h1>
+            </div>
 
-            {% for mc in customer_detail.mc_set.all %}
-                {{ mc.pk }}
-                {{ mc.active }}
-                {{ mc.removed }}
-                {{ mc.year }}
-                {{ mc.motor }}
-                {{ mc.km }}
-                {{ mc.model.model }}
-                {{ mc.model.brand }}
-            {% endfor %}          
+            <dl class="dl-horizontal">
+                <dt>Namn:</dt>
+                <dd>{{ customer_detail.first_name }} {{ customer_detail.last_name }}</dd>
+                <dt>Email:</dt>
+                <dd>{{ customer_detail.email }}</dd>     
+                <dt>Stad:</dt>
+                <dd>{{ customer_detail.postal.city }}</dd>
+                <dt>Adress:</dt>
+                <dd>{{ customer_detail.street }}</dd>
+                <dt>Postadress:</dt>
+                <dd>{{ customer_detail.postal.postal }}</dd>
+                <dt>Mobil:</dt>
+                <dd>{{ customer_detail.telephone_set.all.0 }}</dd> 
+                {% if customer_detail.telephone_set.all.1 %}
+                    <dt>Telefon:</dt>
+                    <dd>{{ customer_detail.telephone_set.all.1 }}</dd>  
+                {% endif %}                
+            </dl>
 
-        </div><!-- /.col-md-6 col-md-offset-3" -->
+        </div><!-- /.col-md-4" -->
+
+        <div class="col-md-4">
+            <div class="page-header">
+                <h1>Motorcykel</h1>
+            </div>
+
+            {% if mc %}
+            <dl class="dl-horizontal">
+                <dt>Regnr:</dt>
+                <dd>{{ mc.pk }}</dd>
+                <dt>Motor:</dt>
+                <dd>{{ mc.motor }}</dd>     
+                <dt>Märke:</dt>
+                <dd>{{ mc.model.brand }}</dd>
+                <dt>Modell:</dt>
+                <dd>{{ mc.model }}</dd>
+                <dt>År:</dt>
+                <dd>{{ mc.year }}</dd>
+                <dt>Km:</dt>
+                <dd>{{ mc.km }}</dd>                
+            </dl>
+            {% else %}
+            <div class="alert alert-danger">
+                <p class="text-center">Har ej motorcykel!</p>
+            </div>
+            {% endif %} 
+        </div><!-- /.col-md-4" -->
+
+        <div class="col-md-4">
+            <div class="page-header">
+                <h1>Motorcyklar</h1>
+            </div>
+
+            {% if mc_form %}
+            <form class="form-horizontal" role="form" action="{% url 'customer-detail' customer_detail.pk %}" method="POST">{% csrf_token %}
+                
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <label class="sr-only" for="id_active_mc">active_mc</label>
+                        {% for fields in mc_form %}
+                            {{ fields }}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-default">Välj aktiv</button>
+                    </div>
+                </div>
+            </form>
+            {% else %}
+            <div class="alert alert-danger">
+                <p class="text-center">Har ej motorcykel!</p>
+            </div>
+            {% endif %} 
+        </div><!-- /.col-md-4" -->
+
     </div><!-- /.row -->
+
+    <div class="row">
+
+        <div class="col-md-12">
+            <div class="page-header">
+                <h1>Historik</h1>
+            </div>
+            {% lorem %}
+        </div><!-- /.col-md-12" -->
+
+    </div><!-- /.row -->
+
 </div><!-- /.panel-body-->
 
 <div class="panel-footer">
@@ -40,3 +111,21 @@
 
 
 {% endblock%}
+
+
+            {{ customer_detail.pk }}
+            
+            
+            
+            
+            
+            
+            {{ customer_detail.postal.postal }}
+            {{ customer_detail.postal.city }}
+
+
+
+            {% for mc in customer_detail.mc_set.all %}
+                {{ mc.active }}
+                {{ mc.removed }}
+            {% endfor %} 

@@ -5,7 +5,7 @@ from . import views
 urlpatterns = patterns('',
     url(
         r'^(?P<pk>\d+)$',
-        views.CustomerDetailView.as_view(), 
+        views.CustomerView.as_view(), 
         name='customer-detail'
 
     ),
@@ -21,7 +21,6 @@ urlpatterns = patterns('',
         name='customer-add'
 
     ),
-
 
 
 )

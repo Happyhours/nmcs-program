@@ -3,10 +3,11 @@ from django.views import generic
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.forms.formsets import formset_factory
+from django.core.urlresolvers import reverse
 
 # Create your views here.
 from .models import Customer, Postal, Model
-from .forms import CustomerForm, McForm, PostalForm, TelephoneForm, ModelForm, PostalFormNormal, ModelFormNormal
+from .forms import CustomerForm, McForm, PostalForm, TelephoneForm, ModelForm, PostalFormNormal, ModelFormNormal, ActiveMcForm
 
 
 def addView(request):
@@ -17,7 +18,7 @@ def addView(request):
     success = False
 
     if request.method == "POST":
-
+        print(request.POST)
         customer_form = CustomerForm(request.POST, prefix='customer')
         postal_form_normal = PostalFormNormal(request.POST, prefix='postal')
         telephone_forms = TelephoneFormSet(request.POST, prefix='telephone')
@@ -128,12 +129,6 @@ def addView(request):
         'model': model_form_normal, 'telephones': telephone_forms, 'telephone1': telephone_form1, 'success': success })
 
 
-class CustomerDetailView(generic.DetailView):
-    model = Customer
-    context_object_name = 'customer_detail'
-    template_name = 'customers/customer_detail.html'
-
-
 class CustomerListView(generic.ListView):
     model = Customer
     context_object_name = 'customer_list'
@@ -168,3 +163,56 @@ class CustomerListView(generic.ListView):
 
         return context
 
+
+class CustomerDetailView(generic.detail.DetailView):
+    model = Customer
+    context_object_name = 'customer_detail'
+    template_name = 'customers/customer_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(CustomerDetailView, self).get_context_data(**kwargs)
+
+        # Check if customer has a mc
+        if self.get_object().mc_set.all().filter(active=True):
+            #context['mc_form'] = ActiveMcForm(self.object.pk, initial = {'active_mc': self.object.mc_set.get(active=True)}, prefix="active_mc")
+            initial = {'active_mc': self.object.mc_set.get(active=True)}
+            context['mc_form'] = ActiveMcForm(customer_pk=self.object.pk, initial = {'active_mc': self.object.mc_set.get(active=True)})
+            context['mc'] = self.object.mc_set.get(active=True)
+        else:
+            context['mc_form'] = []
+            context['mc'] = []
+
+        return context
+
+class CustomerFormView(generic.detail.SingleObjectMixin, generic.edit.FormView):
+    model = Customer
+    template_name = 'customers/customer_detail.html'
+    form_class = ActiveMcForm
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(CustomerFormView, self).post(request, *args, **kwargs)
+
+    def get_form_kwargs(self):
+        kwarg = super(CustomerFormView, self).get_form_kwargs()
+        kwarg['customer_pk']=self.object.pk
+        return kwarg
+
+    def form_valid(self, form):
+        # Updates the selected mc as the new active mc.
+        self.object.update_active_mc(form.cleaned_data['active_mc'])
+        return super(CustomerFormView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('customer-detail', kwargs={'pk': self.object.pk})
+
+
+class CustomerView(generic.base.View):
+
+    def get(self, request, *args, **kwargs):
+        view = CustomerDetailView.as_view()
+        return view(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        view = CustomerFormView.as_view()
+        return view(request, *args, **kwargs)
