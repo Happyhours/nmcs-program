@@ -21,6 +21,18 @@ urlpatterns = patterns('',
         name='customer-add'
 
     ),
+    url(
+        r"^delete/(?P<pk>\d+)$",
+        views.CustomerDeleteView.as_view(),
+        name='customer-delete'
+
+    ),
+    url(
+        r"^update/(?P<pk>\d+)$",
+        views.CustomerUpdateView.as_view(),
+        name='customer-update'
+
+    ),
 
 
 )

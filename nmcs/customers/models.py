@@ -1,12 +1,5 @@
 from django.db import models
 
-# Managers
-
-class CustomerManager(models.Manager):
-
-    def get_active_mc(self):
-        return self.all()
-
 
 # Create your models here.
 
@@ -25,8 +18,6 @@ class Customer(models.Model):
     street = models.CharField(max_length=100)
     postal = models.ForeignKey(Postal)
 
-    objects = CustomerManager()
-
     def get_active_mc(self):
         customer = Customer.objects.get(pk=self.pk)
         try:
@@ -41,12 +32,19 @@ class Customer(models.Model):
         current_active_mc.active = False
         current_active_mc.save()
 
-        # Set selected mc to ahve active True and save to db.
+        # Set selected mc to have active True and save to db.
         new_active_mc = mc_object
         new_active_mc.active = True
         new_active_mc.save()
 
-        # TODO add True or false or error exeption
+    def set_removed_on_mcs(self):
+        customer = Customer.objects.get(pk=self.pk)
+        mcs = customer.mc_set.all()
+        if mcs:
+            for mc in mcs:
+                mc.removed = True
+                mc.active = False
+                mc.save()
 
 
     def __str__(self):
@@ -80,7 +78,7 @@ class Mc(models.Model):
     motor = models.CharField(max_length=50)
     km = models.CharField(max_length=20)
     model = models.ForeignKey(Model)
-    customer = models.ForeignKey(Customer)
+    customer = models.ForeignKey(Customer,null=True, on_delete=models.SET_NULL)
 
     def __str__(self):
         return self.registration_nr

@@ -1,0 +1,57 @@
+{% extends "base_customer.html" %}
+
+{% block content %}
+<div class="panel-body">
+    <div class="row">
+
+        {{ form.as_p }}
+
+        <div class="col-md-offset-4 col-md-4">
+            <div class="page-header">
+                <h1>Update</h1>
+            </div>
+            <div class="alert alert-danger">Updatera följande kund?
+            </div>
+            <dl class="dl-horizontal well">
+                <dt>Namn:</dt>
+                <dd>{{ customer_update.first_name }} {{ customer_update.last_name }}</dd>
+                <dt>Email:</dt>
+                <dd>{{ customer_update.email }}</dd>     
+                <dt>Stad:</dt>
+                <dd>{{ customer_update.postal.city }}</dd>
+                <dt>Adress:</dt>
+                <dd>{{ customer_update.street }}</dd>
+                <dt>Postadress:</dt>
+                <dd>{{ customer_update.postal.postal }}</dd>
+                <dt>Mobil:</dt>
+                <dd>{{ customer_update.telephone_set.all.0 }}</dd> 
+                {% if customer_update.telephone_set.all.1 %}
+                    <dt>Telefon:</dt>
+                    <dd>{{ customer_update.telephone_set.all.1 }}</dd>  
+                {% endif %}                
+            </dl>
+        </div><!-- /.col-md-offset-3 col-md-6" -->
+
+
+        <div class="col-md-offset-4 col-md-4">
+            <form class="form-horizontal" role="form" action="{% url 'customer-update' customer_update.pk %}" method="POST">{% csrf_token %}
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-default">Confirm</button>
+                        <a class="btn btn-default" href="{% url 'customer-detail' customer_update.pk %}" role="button">No, take me back!</a>
+                    </div>
+                </div>
+            </form>
+        </div><!-- /.col-md-offset-3 col-md-6" -->
+
+    </div><!-- /.row -->
+
+
+</div><!-- /.panel-body-->
+
+<div class="panel-footer">
+    <p class="text-center">...</p>
+</div><!-- /.panel-footer--> 
+
+
+{% endblock%}

@@ -11,7 +11,6 @@
             <div class="page-header">
                 <h1>Kund</h1>
             </div>
-
             <dl class="dl-horizontal">
                 <dt>Namn:</dt>
                 <dd>{{ customer_detail.first_name }} {{ customer_detail.last_name }}</dd>
@@ -30,8 +29,16 @@
                     <dd>{{ customer_detail.telephone_set.all.1 }}</dd>  
                 {% endif %}                
             </dl>
+            
+            <a class="btn btn-default" href="{% url 'customer-update' customer_detail.pk %}" role="button">
+                Edit
+            </a>
+            <a class="btn btn-default" href="{% url 'customer-delete' customer_detail.pk %}" role="button">
+                Delete
+            </a>
 
         </div><!-- /.col-md-4" -->
+
 
         <div class="col-md-4">
             <div class="page-header">
@@ -111,21 +118,3 @@
 
 
 {% endblock%}
-
-
-            {{ customer_detail.pk }}
-            
-            
-            
-            
-            
-            
-            {{ customer_detail.postal.postal }}
-            {{ customer_detail.postal.city }}
-
-
-
-            {% for mc in customer_detail.mc_set.all %}
-                {{ mc.active }}
-                {{ mc.removed }}
-            {% endfor %} 

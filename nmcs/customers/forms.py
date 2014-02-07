@@ -48,6 +48,7 @@ class CustomerForm(forms.ModelForm):
 
         return data
 
+
 class McForm(forms.ModelForm):
     class Meta:
         model = Mc
@@ -130,6 +131,7 @@ class PostalForm(forms.ModelForm):
 
         return data
 
+
 class TelephoneForm(forms.ModelForm):
     class Meta:
         model = Telephone
@@ -175,6 +177,7 @@ class ModelForm(forms.ModelForm):
 
         return data
 
+
 # Added this temporary to avoid modelform primary key error validation check.
 class PostalFormNormal(forms.Form):
     postal = forms.CharField(max_length=50, widget = forms.TextInput(attrs={'class': 'form-control'}))
@@ -204,6 +207,7 @@ class PostalFormNormal(forms.Form):
 
         return data
 
+
 # Added this temporary to avoid modelform primary key error validation check.
 class ModelFormNormal(forms.Form):
     model = forms.CharField(max_length=50, widget = forms.TextInput(attrs={'class': 'form-control'}))
@@ -223,6 +227,50 @@ class ModelFormNormal(forms.Form):
         if data:
             data = data.strip()
             data = data.title()
+
+        return data
+
+
+class McFormNormal(forms.Form):
+    registration_nr = forms.CharField(max_length=10, widget = forms.TextInput(attrs={'class': 'form-control'}))
+    year = forms.CharField(max_length=20, widget = forms.TextInput(attrs={'class': 'form-control'}))
+    motor = forms.CharField(max_length=50, widget = forms.TextInput(attrs={'class': 'form-control'}))
+    km = forms.CharField(max_length=20, widget = forms.TextInput(attrs={'class': 'form-control'}))
+
+    def clean_registration_nr(self):
+        data = self.cleaned_data['registration_nr']
+        if data:
+            data = ''.join(data.split())
+            data = data.strip()
+            data = data.upper()
+
+        return data
+
+    def clean_year(self):
+        data = self.cleaned_data['year']
+        if data:
+            data = ''.join(data.split())
+            data = data.strip()
+            if not data.isnumeric():
+                raise forms.ValidationError("Använd bara nummer.")
+
+        return data
+
+    def clean_motor(self):
+        data = self.cleaned_data['motor']
+        if data:
+            data = data.strip()
+            data = data.capitalize()   
+
+        return data
+
+    def clean_km(self):
+        data = self.cleaned_data['km']
+        if data:
+            data = ''.join(data.split())
+            data = data.strip()
+            if not data.isnumeric():
+                raise forms.ValidationError("Använd bara nummer.")
 
         return data
 
