@@ -4,46 +4,95 @@
 <div class="panel-body">
     <div class="row">
 
-        {{ form.as_p }}
+        <form class="form-horizontal" role="form" action="{% url 'customer-update' customer_update.pk %}" method="POST">{% csrf_token %}
+            <div class="col-md-offset-3 col-md-6">
+                <div class="page-header">
+                    <h1>Update</h1>
+                </div>
+                <div class="alert alert-danger">Updatera följande kund?
+                </div>
 
-        <div class="col-md-offset-4 col-md-4">
-            <div class="page-header">
-                <h1>Update</h1>
-            </div>
-            <div class="alert alert-danger">Updatera följande kund?
-            </div>
-            <dl class="dl-horizontal well">
-                <dt>Namn:</dt>
-                <dd>{{ customer_update.first_name }} {{ customer_update.last_name }}</dd>
-                <dt>Email:</dt>
-                <dd>{{ customer_update.email }}</dd>     
-                <dt>Stad:</dt>
-                <dd>{{ customer_update.postal.city }}</dd>
-                <dt>Adress:</dt>
-                <dd>{{ customer_update.street }}</dd>
-                <dt>Postadress:</dt>
-                <dd>{{ customer_update.postal.postal }}</dd>
-                <dt>Mobil:</dt>
-                <dd>{{ customer_update.telephone_set.all.0 }}</dd> 
-                {% if customer_update.telephone_set.all.1 %}
-                    <dt>Telefon:</dt>
-                    <dd>{{ customer_update.telephone_set.all.1 }}</dd>  
-                {% endif %}                
-            </dl>
-        </div><!-- /.col-md-offset-3 col-md-6" -->
+                <div class="well">
 
-
-        <div class="col-md-offset-4 col-md-4">
-            <form class="form-horizontal" role="form" action="{% url 'customer-update' customer_update.pk %}" method="POST">{% csrf_token %}
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <button type="submit" class="btn btn-default">Confirm</button>
-                        <a class="btn btn-default" href="{% url 'customer-detail' customer_update.pk %}" role="button">No, take me back!</a>
+                {% for fields in form %}
+                    {% if fields.errors %}
+                        <div class="form-group has-error">
+                    {% else %}
+                        <div class="form-group">
+                    {% endif %}
+                    <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
+                    <div class="col-md-8">
+                    {{ fields }}
+                    {% for error in fields.errors %}
+                        <strong>{{ error|escape }}</strong>
+                    {% endfor %}
                     </div>
                 </div>
-            </form>
-        </div><!-- /.col-md-offset-3 col-md-6" -->
+                {% endfor %}
 
+                {% for fields in postal %}
+                    {% if fields.errors %}
+                        <div class="form-group has-error">
+                    {% else %}
+                        <div class="form-group">
+                    {% endif %}
+                    <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
+                    <div class="col-md-8">
+                    {{ fields }}
+                    {% for error in fields.errors %}
+                        <strong>{{ error|escape }}</strong>
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% for fields in telephone1 %}
+                    {% if fields.errors %}
+                        <div class="form-group has-error">
+                    {% else %}
+                        <div class="form-group">
+                    {% endif %}        
+                    <label for="{{ fields.id_for_label }}" class="col-md-4 control-label"> Mobil </label>
+                    <div class="col-md-8">
+                    {{ fields }}
+                    {% for error in fields.errors %}
+                        <strong>{{ error|escape }}</strong>
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% if telephone2 %}
+                    {% for fields in telephone2 %}
+                        {% if fields.errors %}
+                            <div class="form-group has-error">
+                        {% else %}
+                            <div class="form-group">
+                        {% endif %}        
+                        <label for="{{ fields.id_for_label }}" class="col-md-4 control-label"> Telefon </label>
+                        <div class="col-md-8">
+                        {{ fields }}
+                        {% for error in fields.errors %}
+                            <strong>{{ error|escape }}</strong>
+                        {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            </div><!-- /.col-md-offset-3 col-md-6" -->
+
+
+            <div class="col-md-offset-3 col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <button type="submit" value="Submit" class="btn btn-default">Confirm</button>
+                            <a class="btn btn-default" href="{% url 'customer-detail' customer_update.pk %}" role="button">No, take me back!</a>
+                        </div>
+                    </div>
+            </div><!-- /.col-md-offset-3 col-md-6" -->
+        </form>
     </div><!-- /.row -->
 
 

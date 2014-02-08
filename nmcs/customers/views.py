@@ -5,8 +5,11 @@ from django.http import HttpResponseRedirect
 from django.forms.formsets import formset_factory
 from django.core.urlresolvers import reverse
 
+from django.forms.models import inlineformset_factory
+from django import forms
+
 # Create your views here.
-from .models import Customer, Postal, Model, Mc
+from .models import Customer, Postal, Model, Mc, Telephone
 from .forms import CustomerForm, McForm, PostalForm, TelephoneForm, ModelForm, PostalFormNormal, ModelFormNormal, ActiveMcForm, McFormNormal
 
 
@@ -248,6 +251,69 @@ class CustomerDeleteView(generic.edit.DeleteView):
 class CustomerUpdateView(generic.edit.UpdateView):
     model = Customer
     context_object_name = 'customer_update'
+    form_class = CustomerForm
+
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+
+        if self.object.telephone_set.all().count() > 1:
+            telephone1 = TelephoneForm(request.POST, instance=self.object.telephone_set.all()[0], prefix='telephone1')
+            telephone2 = TelephoneForm(request.POST, instance=self.object.telephone_set.all()[1], prefix='telephone2')
+            if telephone1.is_valid() and telephone2.is_valid():
+                telephone1.save()
+                telephone2.save()
+            else:
+                print("NOT VALID telephone1 and telephone2")
+        else:
+            telephone1 = TelephoneForm(request.POST, instance=self.object.telephone_set.all()[0], prefix='telephone1')
+            if telephone1.is_valid():
+                telephone1.save()
+            else:
+                print("NOT VALID telephone1")
+
+        #print(request.POST)
+        #tele = TelephoneForm(request.POST['number'][0], instance=)
+        #print("tele: ", tele)
+        postal = PostalForm(request.POST, instance=self.object.postal, prefix='postal')
+        if postal.is_valid():
+            postal1 = postal.save()
+            self.object.postal = postal1
+            self.object.save()
+        else:
+            print("NOT VALID POSTAL")
+        
+        return super(CustomerUpdateView, self).post(request, *args, **kwargs)
+
+
+    def get_context_data(self, **kwargs):
+        context = super(CustomerUpdateView, self).get_context_data(**kwargs)
+
+        context['postal'] = PostalForm(instance=self.object.postal, prefix='postal')
+
+        if self.object.telephone_set.all().count() > 1:
+            context['telephone1'] = TelephoneForm(instance=self.object.telephone_set.all()[0], prefix='telephone1')
+            context['telephone2'] = TelephoneForm(instance=self.object.telephone_set.all()[1], prefix='telephone2')
+        else:
+            context['telephone1'] = TelephoneForm(instance=self.object.telephone_set.all()[0], prefix='telephone1')
+
+        #BookFormSet = inlineformset_factory(Customer, Telephone, extra=0, can_delete=False, 
+        #    widgets = {
+        #        'number': forms.TextInput(attrs={'class': 'form-control'})
+        #    })
+
+        #customer = self.object
+        #formset = BookFormSet(instance=customer)
+        #context['telephones'] = formset
+
+        return context
+
     
     def get_success_url(self):
         return reverse('customer-detail', kwargs={'pk': self.object.pk})
+
+
+
+
+
