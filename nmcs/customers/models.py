@@ -24,6 +24,7 @@ class Customer(models.Model):
             return customer.mc_set.get(active=True)
         except Mc.DoesNotExist:
             print("No active mc exists for this customer")
+            #return {'pk': 'MMM234'}
             return []
 
     def update_active_mc(self, mc_object):

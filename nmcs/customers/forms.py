@@ -1,4 +1,5 @@
 from django import forms
+from django.forms.models import inlineformset_factory
 
 from .models import Customer, Mc, Postal, Telephone, Model
 
@@ -52,9 +53,9 @@ class CustomerForm(forms.ModelForm):
 class McForm(forms.ModelForm):
     class Meta:
         model = Mc
-        fields = ['registration_nr', 'year', 'motor', 'km']
+        fields = ['year', 'motor', 'km']
         widgets = { 
-            'registration_nr': forms.TextInput(attrs={'class': 'form-control'}),
+            #'registration_nr': forms.TextInput(attrs={'class': 'form-control'}),
             'year': forms.TextInput(attrs={'class': 'form-control'}),
             'motor': forms.TextInput(attrs={'class': 'form-control'}),
             'km': forms.TextInput(attrs={'class': 'form-control'})
@@ -185,13 +186,10 @@ class PostalFormNormal(forms.Form):
 
     def clean_postal(self):
         data = self.cleaned_data['postal']
-        print("cleanpostal")
         if data:
             data = ''.join(data.split())
-            print("cleanpostal2: " + data)
             data = data.strip()
             if not data.isnumeric():
-                print("invalid")
                 raise forms.ValidationError("Använd ej bokstäver.")
 
         return data
@@ -274,6 +272,7 @@ class McFormNormal(forms.Form):
 
         return data
 
+
 class ActiveMcForm(forms.Form):
     active_mc = forms.ModelChoiceField(queryset=Customer.objects.none(),
             required=True,
@@ -286,3 +285,11 @@ class ActiveMcForm(forms.Form):
         customer = Customer.objects.get(pk=customer_pk)
         customer_mcs = customer.mc_set.all()
         self.fields['active_mc'].queryset=customer_mcs
+
+
+telephoneInlineFormset = inlineformset_factory(Customer, Telephone, extra=0, can_delete=False, 
+                                               widgets = {'number': forms.TextInput(attrs={'class': 'form-control'})})
+#postalInlineFormset = inlineformset_factory(Postal, Customer, extra=0, can_delete=False)
+
+modelInlineFormset = inlineformset_factory(Model, Mc, extra=0, can_delete=False)
+mcInlineFormset = inlineformset_factory(Customer, Mc, extra=0, can_delete=False)

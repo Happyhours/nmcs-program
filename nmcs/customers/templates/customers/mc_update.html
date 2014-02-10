@@ -1,0 +1,74 @@
+{% extends "base_customer.html" %}
+
+{% block content %}
+<div class="panel-body">
+    <div class="row">
+
+        <form class="form-horizontal" role="form" action="{% url 'mc-update' object.pk %}" method="POST">{% csrf_token %}
+            <div class="col-md-offset-3 col-md-6">
+                <div class="page-header">
+                    <h1>Update</h1>
+                </div>
+                <div class="alert alert-danger">Updatera följande mc?</div>
+
+                <div class="well">
+
+
+                {% for fields in form %}
+                    {% if fields.errors %}
+                        <div class="form-group has-error">
+                    {% else %}
+                        <div class="form-group">
+                    {% endif %}
+                    <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
+                    <div class="col-md-8">
+                    {{ fields }}
+                    {% for error in fields.errors %}
+                        <strong>{{ error|escape }}</strong>
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+
+
+                {% for fields in model_form %}
+                    {% if fields.errors %}
+                        <div class="form-group has-error">
+                    {% else %}
+                        <div class="form-group">
+                    {% endif %}        
+                    <label for="{{ fields.id_for_label }}" class="col-md-4 control-label">{{ fields.label }}</label>
+                    <div class="col-md-8">
+                    {{ fields }}
+                    {% for error in fields.errors %}
+                        <strong>{{ error|escape }}</strong>
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+
+            </div>
+
+            </div><!-- /.col-md-offset-3 col-md-6" -->
+
+
+            <div class="col-md-offset-3 col-md-6">
+                    <div class="form-group">
+                        <div class="col-md-12">
+                            <button type="submit" value="Submit" class="btn btn-default">Confirm</button>
+                            <a class="btn btn-default" href="{% url 'customer-detail' object.customer.pk %}" role="button">No, take me back!</a>
+                        </div>
+                    </div>
+            </div><!-- /.col-md-offset-3 col-md-6" -->
+        </form>
+    </div><!-- /.row -->
+
+
+</div><!-- /.panel-body-->
+
+<div class="panel-footer">
+    <p class="text-center">...</p>
+</div><!-- /.panel-footer--> 
+
+
+{% endblock%}

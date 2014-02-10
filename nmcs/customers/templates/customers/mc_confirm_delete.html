@@ -1,0 +1,53 @@
+{% extends "base_customer.html" %}
+
+{% block content %}
+<div class="panel-body">
+    <div class="row">
+
+
+        <div class="col-md-offset-3 col-md-6">
+            <div class="page-header">
+                <h1>Remove</h1>
+            </div>
+            <div class="alert alert-danger">Ta bort följande mc?
+            </div>
+            <dl class="dl-horizontal well">
+                <dt>Regnr:</dt>
+                <dd>{{ object.pk }}</dd>
+                <dt>Motor:</dt>
+                <dd>{{ object.motor }}</dd>     
+                <dt>Märke:</dt>
+                <dd>{{ object.model.brand }}</dd>
+                <dt>Modell:</dt>
+                <dd>{{ object.model }}</dd>
+                <dt>År:</dt>
+                <dd>{{ object.year }}</dd>
+                <dt>Km:</dt>
+                <dd>{{ object.km }}</dd>                
+            </dl>
+
+        </div><!-- /.col-md-offset-3 col-md-6" -->
+
+
+        <div class="col-md-offset-3 col-md-6">
+            <form class="form-horizontal" role="form" action="{% url 'mc-delete' object.pk %}" method="POST">{% csrf_token %}
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <button type="submit" class="btn btn-default">Confirm</button>
+                        <a class="btn btn-default" href="{% url 'customer-detail' object.customer.pk %}" role="button">No, take me back!</a>
+                    </div>
+                </div>
+            </form>
+        </div><!-- /.col-md-offset-3 col-md-6" -->
+
+    </div><!-- /.row -->
+
+
+</div><!-- /.panel-body-->
+
+<div class="panel-footer">
+    <p class="text-center">...</p>
+</div><!-- /.panel-footer--> 
+
+
+{% endblock%}

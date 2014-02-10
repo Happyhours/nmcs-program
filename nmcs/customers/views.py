@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.views import generic
+from django.views.generic import TemplateView, UpdateView, DeleteView
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.forms.formsets import formset_factory
@@ -9,11 +10,29 @@ from django.forms.models import inlineformset_factory
 from django import forms
 
 # Create your views here.
-from .models import Customer, Postal, Model, Mc, Telephone
-from .forms import CustomerForm, McForm, PostalForm, TelephoneForm, ModelForm, PostalFormNormal, ModelFormNormal, ActiveMcForm, McFormNormal
+from .models import (
+    Customer,
+    Postal,
+    Model,
+    Mc, 
+    Telephone
+)
+
+from .forms import ( 
+    CustomerForm, 
+    McForm, 
+    PostalForm, 
+    TelephoneForm, 
+    ModelForm, 
+    PostalFormNormal, 
+    ModelFormNormal, 
+    ActiveMcForm, 
+    McFormNormal,
+    telephoneInlineFormset,
+)
 
 
-def addView(request):
+def addView(request, *args, **kwargs):
 
     #Formset for telephone
     TelephoneFormSet = formset_factory(TelephoneForm, extra=1)
@@ -248,72 +267,150 @@ class CustomerDeleteView(generic.edit.DeleteView):
         return reverse('customer-list')
 
 
-class CustomerUpdateView(generic.edit.UpdateView):
+class CustomerUpdateView(UpdateView):
     model = Customer
-    context_object_name = 'customer_update'
-    form_class = CustomerForm
+    form_class = CustomerForm # instance=Customer
+    template_name = 'customers/customer_update.html'
 
+    def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests and instantiates a blank version of the form.
+        """
+        self.object = self.get_object()
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+
+        telephone_formset = telephoneInlineFormset(instance=self.object)
+        postal_form = PostalFormNormal(initial={'postal': self.object.postal, 'city': self.object.postal.city})
+
+        return self.render_to_response(self.get_context_data(form=form,
+                                       telephone_formset=telephone_formset,
+                                       postal_form=postal_form))
 
     def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests, instantiating a form instance with the passed
+        POST variables and then checked for validity.
+        """
         self.object = self.get_object()
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
 
+        telephone_formset = telephoneInlineFormset(self.request.POST, instance=self.object)
+        postal_form = PostalFormNormal(self.request.POST)
 
-        if self.object.telephone_set.all().count() > 1:
-            telephone1 = TelephoneForm(request.POST, instance=self.object.telephone_set.all()[0], prefix='telephone1')
-            telephone2 = TelephoneForm(request.POST, instance=self.object.telephone_set.all()[1], prefix='telephone2')
-            if telephone1.is_valid() and telephone2.is_valid():
-                telephone1.save()
-                telephone2.save()
-            else:
-                print("NOT VALID telephone1 and telephone2")
+        if form.is_valid() and telephone_formset.is_valid() and postal_form.is_valid():
+            return self.form_valid(form, telephone_formset, postal_form)
         else:
-            telephone1 = TelephoneForm(request.POST, instance=self.object.telephone_set.all()[0], prefix='telephone1')
-            if telephone1.is_valid():
-                telephone1.save()
-            else:
-                print("NOT VALID telephone1")
+            return self.form_invalid(form, telephone_formset, postal_form)
 
-        #print(request.POST)
-        #tele = TelephoneForm(request.POST['number'][0], instance=)
-        #print("tele: ", tele)
-        postal = PostalForm(request.POST, instance=self.object.postal, prefix='postal')
-        if postal.is_valid():
-            postal1 = postal.save()
-            self.object.postal = postal1
-            self.object.save()
-        else:
-            print("NOT VALID POSTAL")
-        
-        return super(CustomerUpdateView, self).post(request, *args, **kwargs)
+    def form_valid(self, form, telephone_formset, postal_form):
 
+        try: 
+            postal = Postal.objects.get(postal=postal_form.cleaned_data['postal'])
+        except Postal.DoesNotExist:
+            postal = Postal.objects.create(postal=postal_form.cleaned_data['postal'], 
+                                      city=postal_form.cleaned_data['city'])
 
-    def get_context_data(self, **kwargs):
-        context = super(CustomerUpdateView, self).get_context_data(**kwargs)
+        self.object.postal = postal
+        self.object.save()
+        telephone_formset.save()
 
-        context['postal'] = PostalForm(instance=self.object.postal, prefix='postal')
+        return super(CustomerUpdateView, self).form_valid(form)
 
-        if self.object.telephone_set.all().count() > 1:
-            context['telephone1'] = TelephoneForm(instance=self.object.telephone_set.all()[0], prefix='telephone1')
-            context['telephone2'] = TelephoneForm(instance=self.object.telephone_set.all()[1], prefix='telephone2')
-        else:
-            context['telephone1'] = TelephoneForm(instance=self.object.telephone_set.all()[0], prefix='telephone1')
+    def form_invalid(self, form, telephone_formset, postal_form):
+        """
+        If the form is invalid, re-render the context data with the
+        data-filled form and errors.
+        """
+        return self.render_to_response(self.get_context_data(form=form,
+                                       telephone_formset=telephone_formset,
+                                       postal_form=postal_form))
 
-        #BookFormSet = inlineformset_factory(Customer, Telephone, extra=0, can_delete=False, 
-        #    widgets = {
-        #        'number': forms.TextInput(attrs={'class': 'form-control'})
-        #    })
-
-        #customer = self.object
-        #formset = BookFormSet(instance=customer)
-        #context['telephones'] = formset
-
-        return context
-
-    
     def get_success_url(self):
+        self.object = self.get_object()
         return reverse('customer-detail', kwargs={'pk': self.object.pk})
 
 
+class McUpdateView(UpdateView):
+    model = Mc
+    template_name = 'customers/mc_update.html'
+    form_class = McForm
+    
+    def get(self,request, *args, **kwargs):
+        """
+        Handles GET requests and instantiates a blank version of the form.
+        """
+        self.object = self.get_object()
+
+        
+        model_form = ModelFormNormal(initial={'model': self.object.model, 'brand': self.object.model.brand})
+
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        return self.render_to_response(self.get_context_data(form=form, model_form=model_form))     
 
 
+    def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests, instantiating a form instance with the passed
+        POST variables and then checked for validity.
+        """
+        self.object = self.get_object()
+
+        model_form = ModelFormNormal(self.request.POST)
+
+        form_class = self.get_form_class()
+        form = self.get_form(form_class)
+        if form.is_valid() and model_form.is_valid():
+            return self.form_valid(form, model_form)
+        else:
+            return self.form_invalid(form, model_form)
+
+    def form_valid(self, form, model_form):
+
+        try: 
+            model = Model.objects.get(model=model_form.cleaned_data['model'])
+        except Model.DoesNotExist:
+            model = Model.objects.create(model=model_form.cleaned_data['model'], 
+                                         brand=model_form.cleaned_data['brand'])
+
+        self.object.model = model
+        self.object.save()
+
+        return super(McUpdateView, self).form_valid(form)
+
+    def form_invalid(self, form, model_form):
+        """
+        If the form is invalid, re-render the context data with the
+        data-filled form and errors.
+        """
+        return self.render_to_response(self.get_context_data(form=form, model_formset=model_formset))
+
+    def get_success_url(self):
+        self.object = self.get_object()
+        return reverse('customer-detail', kwargs={'pk': self.object.customer.pk})
+
+
+class McDeleteView(DeleteView):
+    model = Mc
+    template_name = 'customers/mc_confirm_delete.html'
+
+    def delete(self, request, *args, **kwargs):
+        """
+        Calls the delete() method on the fetched object and then
+        redirects to the success URL.
+        """
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+
+        self.object.active = False
+        self.object.removed = True
+        self.object.customer = None
+        self.object.save()
+        return HttpResponseRedirect(success_url)
+
+    def get_success_url(self):
+        return reverse('customer-detail', kwargs={'pk': self.object.customer.pk})
+            
 

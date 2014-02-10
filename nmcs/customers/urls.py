@@ -33,6 +33,16 @@ urlpatterns = patterns('',
         name='customer-update'
 
     ),
+    url(
+        r'^update/mc/(?P<pk>\w+)$',
+        views.McUpdateView.as_view(),
+        name='mc-update'
+    ),
+    url(
+        r'^delete/mc/(?P<pk>\w+)$',
+        views.McDeleteView.as_view(),
+        name='mc-delete'
+    )
 
 
 )
