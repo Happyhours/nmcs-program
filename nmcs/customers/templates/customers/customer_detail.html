@@ -60,6 +60,9 @@
                 <dd>{{ mc.km }}</dd>                
             </dl>
 
+            <a class="btn btn-default" href="{% url 'mc-create' customer_detail.pk %}" role="button">
+                Add MC
+            </a>
             <a class="btn btn-default" href="{% url 'mc-update' customer_detail.get_active_mc.pk %}" role="button">
                 Edit
             </a>
@@ -67,11 +70,14 @@
                 Delete
             </a>
 
+
             {% else %}
             <div class="alert alert-danger">
                 <p class="text-center">Har ej motorcykel!</p>
             </div>
-            
+            <a class="btn btn-default" href="{% url 'mc-create' customer_detail.pk %}" role="button">
+                Add MC
+            </a>
             {% endif %} 
             
         </div><!-- /.col-md-4" -->

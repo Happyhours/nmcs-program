@@ -49,13 +49,12 @@ class CustomerForm(forms.ModelForm):
 
         return data
 
-
 class McForm(forms.ModelForm):
     class Meta:
         model = Mc
-        fields = ['year', 'motor', 'km']
+        fields = ['registration_nr', 'year', 'motor', 'km']
         widgets = { 
-            #'registration_nr': forms.TextInput(attrs={'class': 'form-control'}),
+            'registration_nr': forms.TextInput(attrs={'class': 'form-control'}),
             'year': forms.TextInput(attrs={'class': 'form-control'}),
             'motor': forms.TextInput(attrs={'class': 'form-control'}),
             'km': forms.TextInput(attrs={'class': 'form-control'})
@@ -98,6 +97,15 @@ class McForm(forms.ModelForm):
 
         return data
 
+class McFormUpdate(McForm):
+    class Meta:
+        model = Mc
+        fields = ['year', 'motor', 'km']
+        widgets = { 
+            'year': forms.TextInput(attrs={'class': 'form-control'}),
+            'motor': forms.TextInput(attrs={'class': 'form-control'}),
+            'km': forms.TextInput(attrs={'class': 'form-control'})
+        }
 
 class PostalForm(forms.ModelForm):
     class Meta:
@@ -292,4 +300,9 @@ telephoneInlineFormset = inlineformset_factory(Customer, Telephone, extra=0, can
 #postalInlineFormset = inlineformset_factory(Postal, Customer, extra=0, can_delete=False)
 
 modelInlineFormset = inlineformset_factory(Model, Mc, extra=0, can_delete=False)
-mcInlineFormset = inlineformset_factory(Customer, Mc, extra=0, can_delete=False)
+mcInlineFormset = inlineformset_factory(Customer, Mc, extra=1, can_delete=False,
+                                        fields=('registration_nr', 'year', 'motor', 'km'),
+                                        widgets = {'registration_nr': forms.TextInput(attrs={'class': 'form-control'}),
+                                                    'year': forms.TextInput(attrs={'class': 'form-control'}),
+                                                    'motor': forms.TextInput(attrs={'class': 'form-control'}),
+                                                    'km': forms.TextInput(attrs={'class': 'form-control'})})

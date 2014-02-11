@@ -42,6 +42,11 @@ urlpatterns = patterns('',
         r'^delete/mc/(?P<pk>\w+)$',
         views.McDeleteView.as_view(),
         name='mc-delete'
+    ),
+    url(
+        r'^customer/create/(?P<pk>\w+)$',
+        views.McCreateView.as_view(),
+        name='mc-create'
     )
 
 

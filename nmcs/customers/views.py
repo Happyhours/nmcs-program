@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views import generic
-from django.views.generic import TemplateView, UpdateView, DeleteView
+from django.views.generic import TemplateView, UpdateView, DeleteView, CreateView
 from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.forms.formsets import formset_factory
@@ -29,6 +29,9 @@ from .forms import (
     ActiveMcForm, 
     McFormNormal,
     telephoneInlineFormset,
+    mcInlineFormset,
+    McFormUpdate
+
 )
 
 
@@ -120,7 +123,6 @@ def addView(request, *args, **kwargs):
                     mc.active = True
                     mc.customer = customer
                     mc.save()
-                    print("1")
                 except Mc.DoesNotExist:
                     mc = mc_form.save(commit=False)
                     mc.registration_nr = mc_form_normal.cleaned_data['registration_nr']
@@ -128,10 +130,10 @@ def addView(request, *args, **kwargs):
                     mc.motor = mc_form_normal.cleaned_data['motor']
                     mc.km = mc_form_normal.cleaned_data['km']
                     mc.active = True
+                    mc.removed = False
                     mc.customer = customer
                     mc.model = model
                     mc.save()
-                    print("2")
 
                 telephone1 = telephone_form1.save(commit=False)
                 telephone1.number = telephone_form1.cleaned_data['number']
@@ -335,7 +337,7 @@ class CustomerUpdateView(UpdateView):
 class McUpdateView(UpdateView):
     model = Mc
     template_name = 'customers/mc_update.html'
-    form_class = McForm
+    form_class = McFormUpdate
     
     def get(self,request, *args, **kwargs):
         """
@@ -343,7 +345,6 @@ class McUpdateView(UpdateView):
         """
         self.object = self.get_object()
 
-        
         model_form = ModelFormNormal(initial={'model': self.object.model, 'brand': self.object.model.brand})
 
         form_class = self.get_form_class()
@@ -404,13 +405,101 @@ class McDeleteView(DeleteView):
         self.object = self.get_object()
         success_url = self.get_success_url()
 
+        customer = self.object.customer
+        listan = customer.mc_set.filter(active=False, removed=False)
+        if listan.count() >= 1:
+            new_active_mc = listan[0]
+            new_active_mc.active = True       
+            new_active_mc.save()  
+
         self.object.active = False
         self.object.removed = True
         self.object.customer = None
         self.object.save()
+
+
         return HttpResponseRedirect(success_url)
 
     def get_success_url(self):
         return reverse('customer-detail', kwargs={'pk': self.object.customer.pk})
             
+
+class McCreateView(CreateView):
+    model = Customer
+    form_class = McFormNormal
+    template_name = 'customers/mc_form.html'
+
+    def get_success_url(self):
+        return reverse('customer-detail', kwargs={'pk': self.object.pk})
+
+    def get(self, request, *args, **kwargs):
+        """
+        Handles GET requests and instantiates a blank version of the form.
+        """
+        self.object = self.get_object()
+        model_form = ModelFormNormal()
+        form = self.form_class()
+
+        return self.render_to_response(self.get_context_data(form=form, model_form=model_form))
+
+    def post(self, request, *args, **kwargs):
+        """
+        Handles POST requests, instantiating a form instance with the passed
+        POST variables and then checked for validity.
+        """
+        self.object = self.get_object()
+
+        model_form = ModelFormNormal(self.request.POST)
+        form = self.form_class(self.request.POST)
+
+        if form.is_valid() and model_form.is_valid():
+            return self.form_valid(form, model_form)
+        else:
+            return self.form_invalid(form, model_form)
+
+    def form_valid(self, form, model_form):
+
+        try: 
+            model = Model.objects.get(model=model_form.cleaned_data['model'])
+        except Model.DoesNotExist:
+            model = Model.objects.create(model=model_form.cleaned_data['model'], 
+                                         brand=model_form.cleaned_data['brand'])
+
+        try: 
+            mc = Mc.objects.get(registration_nr=form.cleaned_data['registration_nr'])
+            mc.removed = False
+            if self.object.get_active_mc() == []:
+                mc.active = True
+            else:
+                mc.active = False
+            mc.customer = self.object
+            mc.model = model
+            mc.save()
+        except Mc.DoesNotExist:
+            mc = Mc()
+            mc.registration_nr = form.cleaned_data['registration_nr']
+            mc.year = form.cleaned_data['year']
+            mc.motor = form.cleaned_data['motor']
+            mc.km = form.cleaned_data['km']
+            if self.object.get_active_mc() == []:
+                mc.active = True
+            else:
+                mc.active = False
+            mc.removed = False
+            mc.customer = self.object
+            mc.model = model
+            mc.save()
+
+
+        return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form, model_form):
+        """
+        If the form is invalid, re-render the context data with the
+        data-filled form and errors.
+        """
+        return self.render_to_response(self.get_context_data(form=form, model_form=model_form))
+
+
+
 
