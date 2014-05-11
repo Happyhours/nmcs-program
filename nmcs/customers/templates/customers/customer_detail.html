@@ -115,23 +115,68 @@
     </div><!-- /.row -->
 
     <div class="row">
+        <div class="col-md-4 col-md-offset-4">
 
-        <div class="col-md-12">
-            <div class="page-header">
-                <h1>Historik</h1>
+            <h1 class="text-center">Historik</h1>           
 
-                <a class="btn btn-default" href="{% url 'service-create' customer_detail.pk %}" role="button">
-                    Ny serviceorder
-                </a>
-                <a class="btn btn-default" href="#" role="button">
-                    Ny arbetsorder
-                </a>
-
-            </div>
-            
         </div><!-- /.col-md-12" -->
-
     </div><!-- /.row -->
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Serviceprotokoll</th>
+                            <th class="text-center">Arbetsorder</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% if serviceprotocols %}
+                        {% for service in serviceprotocols %}
+                        
+                        <tr class="success">
+                            <td class="text-center">
+                                <a href="{% url 'service-update' service.pk %}">
+                                    {{ service.date }} UPDATEVIEW
+                                </a>
+                            </td>
+ 
+                            <td class="text-center">
+                                <a href="{% url 'service-detail' service.pk %}">
+                                    {{ service.date }} - DETAILVIEW
+                                </a>
+                            </td>       
+                        </tr>
+                        {% endfor%}
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>          
+        </div><!-- /.col-md-12" -->
+    </div><!-- /.row -->
+
+    <div class="row">
+        <div class="col-md-4 col-md-offset-2">
+
+            <a class="btn btn-default" href="{% url 'service-create' customer_detail.pk %}" role="button">
+                Ny serviceorder
+            </a>
+
+        </div><!-- /.col-md-12" -->
+        <div class="col-md-4 col-md-offset-2">
+
+            <a class="btn btn-default" href="#" role="button">
+                Ny arbetsorder
+            </a>         
+
+        </div><!-- /.col-md-12" -->
+    </div><!-- /.row -->
+
+
+
+
 
 </div><!-- /.panel-body-->
 
@@ -141,3 +186,6 @@
 
 
 {% endblock%}
+
+
+       

@@ -1,0 +1,68 @@
+{% extends "base_customer.html" %}
+
+{% block content %}
+<div class="panel-body">
+    <div class="row">
+
+        <form class="form-horizontal" role="form" action="{% url 'service-update' pk %}" method="POST">{% csrf_token %}
+
+            <div class="col-md-12">
+                <div class="page-header">
+                    <h1>Serviceprotokoll</h1>
+                </div>
+            </div><!-- /.col-md-12" -->
+
+            <div class="col-md-12" >
+                <div class="row">
+                {% for fields in form %}
+                    {% if forloop.counter == 6 or forloop.counter == 7 or forloop.counter == 8 or forloop.counter == 9 %}
+
+                        {% if forloop.counter == 6 %}
+                            <div class="col-md-2 col-md-offset-2" >
+                        {% else %}
+                            <div class="col-md-2">
+                        {% endif %}
+                            
+                    {% else %}
+                            <div class="col-md-12">
+                    {% endif %}
+
+                    {% if fields.errors %}
+                        <div class="form-group has-error">
+                    {% else %}
+                        <div class="form-group">
+                    {% endif %}
+                    <label for="{{ fields.id_for_label }}" class="col-md-2 control-label">{{ fields.label }}</label>
+                    <div class="col-md-10">
+                    {{ fields }}
+                    {% for error in fields.errors %}
+                        <strong>{{ error|escape }}</strong>
+                    {% endfor %}
+                    </div>
+                </div>
+                </div>
+                
+                {% endfor %}
+                </div><!-- /row" -->
+            </div><!-- /.col-md-12" -->
+
+            <div class="form-group">
+                <div class="col-md-offset-9 col-md-3">
+                    <button type="submit" value="Submit" class="btn btn-default">Add</button>
+                    <a class="btn btn-default" href="{% url 'service-create' pk %}" role="button">Clear</a>
+                </div>
+            </div>  
+     
+        </form>
+
+    </div><!-- /.row -->
+
+
+</div><!-- /.panel-body-->
+
+<div class="panel-footer">
+    <p class="text-center">...</p>
+</div><!-- /.panel-footer--> 
+
+
+{% endblock%}

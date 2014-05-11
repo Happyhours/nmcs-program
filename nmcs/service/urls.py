@@ -8,7 +8,15 @@ urlpatterns = patterns('',
         views.ServiceCreateView.as_view(),
         name='service-create'
     ),
-
-
+    url(
+        r'^update/(?P<pk>\d+)$',
+        views.ServiceUpdateView.as_view(),
+        name='service-update'
+    ),
+    url(
+        r'^detail/(?P<pk>\d+)$',
+        views.ServiceDetailView.as_view(),
+        name='service-detail'
+    ),
 
 )

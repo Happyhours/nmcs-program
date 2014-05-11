@@ -208,6 +208,9 @@ class CustomerDetailView(generic.detail.DetailView):
     def get_context_data(self, **kwargs):
         context = super(CustomerDetailView, self).get_context_data(**kwargs)
 
+        #Fetch serviceprotocols and add to context
+        context['serviceprotocols'] = self.get_object().serviceprotocol_set.all()
+
         # Check if customer has a mc
         if self.get_object().mc_set.all().filter(active=True):
             #context['mc_form'] = ActiveMcForm(self.object.pk, initial = {'active_mc': self.object.mc_set.get(active=True)}, prefix="active_mc")

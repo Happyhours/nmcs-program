@@ -1,0 +1,444 @@
+{% extends "base_customer.html" %}
+
+{% block content %}
+<div class="panel-body">
+    <div class="row">
+
+        <div class="col-md-12">
+                <h1 class="text-center">Serviceprotokoll</h1>
+        </div><!-- /.col-md-12" -->
+
+        <div class="col-md-4 col-md-offset-4">
+            <dl class="dl-horizontal">
+                <dt>Datum: </dt>
+                <dd>{{ object.date }}</dd>
+            </dl>
+        </div><!-- /.col-md-4 col-md-offset-4" -->
+
+        <div class="col-md-6">
+            <dl class="dl-horizontal">
+                <dt>Modell: </dt>
+                <dd>{{ object.model }}</dd>
+                <dt>År: </dt>
+                <dd>{{ object.year }}</dd>     
+                <dt>Km:</dt>
+                <dd>{{ object.km }}</dd>
+                <dt>Tekniker:</dt>
+                <dd> {{ object.employee }}</dd>
+                <dt>Regnr: </dt>
+                <dd>{{ object.registration_nr }}</dd>
+            </dl>
+        </div><!-- /.col-md-6" -->
+
+        <div class="col-md-6">
+            <address>
+              <strong>Nilsson's MC Shop AB</strong><br>
+              Industrigatan 48<br>
+              58277 Linköping<br>
+              Tel 013-141459<br>
+              Mob. 072-7141471<br>
+            </address>
+        </div><!-- /.col-md-6" -->
+
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-3">
+                    <dl class="dl-horizontal">
+                        {% if object.oil_check %}
+                        <dt>
+                            <button type="button" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </button>
+                        </dt>
+                        {% else %}
+                        <dt>
+                            <button type="button" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </dt>
+                        {% endif %}
+                        <dd>Oljebyte</dd>
+                    </dl>
+                </div>
+                <div class="col-md-3">
+                    <dl class="dl-horizontal">
+                        {% if object.motor_check %}
+                        <dt>
+                            <button type="button" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </button>
+                        </dt>
+                        {% else %}
+                        <dt>
+                            <button type="button" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </dt>
+                        {% endif %} 
+                        <dd>Motor</dd>   
+                    </dl>
+                </div>
+                <div class="col-md-3">
+                    <dl class="dl-horizontal">
+                        {% if object.primary_check %}
+                        <dt>
+                            <button type="button" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </button>
+                        </dt>
+                        {% else %}
+                        <dt>
+                            <button type="button" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </dt>
+                        {% endif %} 
+                        <dd>Primär</dd>  
+                    </dl>   
+                </div>
+                <div class="col-md-3">
+                    <dl class="dl-horizontal">
+                        {% if object.gearbox_check %}
+                        <dt>
+                            <button type="button" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-ok"></span>
+                            </button>
+                        </dt>
+                        {% else %}
+                        <dt>
+                            <button type="button" class="btn btn-default btn-xs">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </button>
+                        </dt>
+                        {% endif %} 
+                        <dd>Vx.låda</dd>   
+                    </dl>
+                </div>
+            </div>
+
+            <dl class="dl-horizontal">
+                {% if object.chain_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %}                 
+                    <dd>Kontroll premiärkedja + ev. justering</dd>
+
+                {% if object.cylinder_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt> 
+                {% endif %}
+                    <dd>Kontroll broms + kopplingscylindrar + slangar</dd> 
+
+
+                {% if object.brakes_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %}  
+                    <dd>Byte broms + koppl. Vätskor</dd> 
+ 
+                {% if object.front_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %}  
+                    <dd>Kontroll bromsklossar fram</dd> 
+                  
+                {% if object.back_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Kontroll bromsklossar bak</dd> 
+
+                {% if object.plug_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Kontroll tändstift</dd> 
+
+                {% if object.rm_plug_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Byte tändstift</dd> 
+  
+                {% if object.grease_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Kontroll vajrar + smörjning</dd> 
+  
+                {% if object.air_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Kontroll luftrenare</dd> 
+
+                {% if object.rm_air_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Byte luftrenare</dd> 
+
+                {% if object.filter_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Rengöring luftfilter KN-typ</dd> 
+
+                {% if object.belt_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Kontroll belt - drivkedja + ev. justering - smörjning</dd>  
+                {% if object.tires_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Kontroll däck + fälgar + lagar</dd>  
+                {% if object.pressure_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Lufttryck fram + bak</dd>      
+                {% if object.fuel_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Kontroll bränsle + oljeslangar</dd>  
+                {% if object.layer_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Kontroll styrlager</dd>  
+                {% if object.rm_layer_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Smörjning styrlager</dd>  
+                {% if object.support_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Smörjning av stöd</dd>                
+                {% if object.blinkers_check %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Kontroll belysning + blinkers + nivå justering</dd> 
+                {% if object.error_check %}1
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-ok"></span>
+                        </button>
+                    </dt>
+                {% else %}
+                    <dt>
+                        <button type="button" class="btn btn-default btn-xs">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                    </dt>
+                {% endif %} 
+                    <dd>Felkoder</dd> 
+            </dl>
+
+            <dl class="dl">
+                <dt>Övrigt enl. önskemål</dt> <dd>{{object.additional}}</dd>
+                <dt>Anm.</dt> <dd>{{object.comment}}</dd>
+            </dl>
+
+        </div><!-- /.col-md-6" -->
+
+
+    
+        <div class="col-md-offset-9 col-md-3">
+            <a class="btn btn-default" href="{% url 'customer-detail' pk %}" role="button">
+                OK
+            </a>
+            <a class="btn btn-default" href="{% url 'service-update' object.pk %}" role="button">
+               Ändra
+            </a>    
+        </div><!-- /.col-md-12" -->
+    
+
+
+    </div><!-- /.row -->
+
+
+</div><!-- /.panel-body-->
+
+<div class="panel-footer">
+    <p class="text-center">...</p>
+</div><!-- /.panel-footer--> 
+
+
+{% endblock%}
