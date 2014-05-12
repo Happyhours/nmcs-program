@@ -36,7 +36,7 @@ class Serviceprotocol(models.Model):
     model = models.CharField(max_length=50)
     year = models.CharField(max_length=50)
     km = models.CharField(max_length=50)
-    employee = models.CharField(max_length=50,blank=True)
+    employee = models.CharField(max_length=50)
     registration_nr = models.CharField(max_length=50)
 
     customer = models.ForeignKey(Customer)

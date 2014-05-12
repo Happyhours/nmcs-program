@@ -18,5 +18,10 @@ urlpatterns = patterns('',
         views.ServiceDetailView.as_view(),
         name='service-detail'
     ),
+    url(
+        r'^delete/(?P<pk>\d+)$',
+        views.ServiceDeleteView.as_view(),
+        name='service-delete'
+    ),
 
 )

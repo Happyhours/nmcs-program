@@ -37,13 +37,11 @@ class ServiceCreateView(CreateView):
         mc = customer.get_active_mc()
         self.initial = {'model': mc.model.model,
                         'year': mc.year,
-                        'km': mc.km,
-                        'employee': 'TESTPERSON',
-                        'registration_nr': mc.registration_nr}
+                        'km': mc.km}
 
         form_class = self.get_form_class()
         form = self.get_form(form_class)
-        return self.render_to_response(self.get_context_data(form=form))
+        return self.render_to_response(self.get_context_data(form=form, reg=mc.registration_nr))
 
     def get_success_url(self):
         pk = self.kwargs.get(self.pk_url_kwarg, None)
@@ -59,8 +57,19 @@ class ServiceCreateView(CreateView):
     def form_valid(self, form):
         self.object = form.save(commit=False)
         customer = Customer.objects.get(pk=self.kwargs.get(self.pk_url_kwarg, None))
+        #Fetch motorcykle
+        mc = customer.get_active_mc()
+        self.object.registration_nr = mc.registration_nr
         self.object.customer = customer
         self.object.save()
+
+        #Also modify the real motorcykle and not only the form temporary values!
+        mc.model.model = self.object.model
+        mc.year = self.object.year
+        mc.km = self.object.km
+        mc.save()
+
+        
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -103,17 +112,12 @@ class ServiceDetailView(DetailView):
 
 
 
+class ServiceDeleteView(DeleteView):
+    model = Serviceprotocol
+    template_name = 'service/service_confirm_delete.html'
 
 
-
-
-
-
-
-
-
-
-
-
+    def get_success_url(self):
+        return reverse('customer-detail', kwargs={'pk': self.object.customer.pk})
 
 

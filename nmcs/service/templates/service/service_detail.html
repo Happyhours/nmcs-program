@@ -420,15 +420,23 @@
 
 
     
-        <div class="col-md-offset-9 col-md-3">
-            <a class="btn btn-default" href="{% url 'customer-detail' pk %}" role="button">
-                OK
+        <div class="col-md-offset-8 col-md-4">
+            <a class="btn btn-default" href="{% url 'customer-detail' object.customer.pk %}" role="button">
+                Tillbaka
             </a>
             <a class="btn btn-default" href="{% url 'service-update' object.pk %}" role="button">
-               Ändra
+                Ändra
+            </a>
+            <a class="btn btn-default" href="{% url 'service-delete' object.pk %}" role="button">
+                Ta bort
+            </a>
+        </div><!-- /.col-md-offset-8 col-md-4" -->
+        
+        <div class="col-md-offset-8 col-md-4">
+            <a class="btn btn-default" href="#" role="button">
+                Skriv ut
             </a>    
         </div><!-- /.col-md-12" -->
-    
 
 
     </div><!-- /.row -->

@@ -15,9 +15,15 @@
             <div class="col-md-12" >
                 <div class="row">
                 {% for fields in form %}
-                    {% if forloop.counter == 6 or forloop.counter == 7 or forloop.counter == 8 or forloop.counter == 9 %}
+                    {% if forloop.counter == 5 or forloop.counter == 6 or forloop.counter == 7 or forloop.counter == 8 %}
 
-                        {% if forloop.counter == 6 %}
+                        {% if forloop.counter == 5 %}
+
+                            <label for="id_registration_nr" class="col-md-2 control-label">Registration_nr</label>
+                            <div class="col-md-10">
+                                <p class="form-control-static">{{object.registration_nr}}</p> 
+                            </div>
+
                             <div class="col-md-2 col-md-offset-2" >
                         {% else %}
                             <div class="col-md-2">
@@ -47,9 +53,16 @@
             </div><!-- /.col-md-12" -->
 
             <div class="form-group">
-                <div class="col-md-offset-9 col-md-3">
-                    <button type="submit" value="Submit" class="btn btn-default">Add</button>
-                    <a class="btn btn-default" href="{% url 'service-create' pk %}" role="button">Clear</a>
+                <div class="col-md-offset-8 col-md-4">
+                    <a class="btn btn-default" href="{% url 'service-detail' object.pk %}" role="button">
+                        Tillbaka
+                    </a>   
+                    <button type="submit" value="Submit" class="btn btn-default">
+                        Add
+                    </button>
+                    <a class="btn btn-default" href="{% url 'service-create' pk %}" role="button">
+                        Clear
+                    </a>
                 </div>
             </div>  
      
