@@ -3,6 +3,17 @@ from django import forms
 from .models import Serviceprotocol
 
 class ServiceprotocolForm(forms.ModelForm):
+
+    additional = forms.CharField(
+            max_length = 750,
+            widget = forms.Textarea
+        )
+
+    comment = forms.CharField(
+            max_length = 750,
+            widget = forms.Textarea
+        )
+
     class Meta:
         model = Serviceprotocol
         fields = [

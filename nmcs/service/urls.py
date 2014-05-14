@@ -23,5 +23,10 @@ urlpatterns = patterns('',
         views.ServiceDeleteView.as_view(),
         name='service-delete'
     ),
+    url(
+        r'^pdf/(?P<pk>\d+)$',
+        views.some_view3,
+        name='service-pdf'
+    ),
 
 )
