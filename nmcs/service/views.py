@@ -432,7 +432,6 @@ def some_view3(request, *args, **kwargs):
                             ('ALIGN',(0,0),(0,0),'LEFT'),
                     ])
         #Modefiera celler i efterhand.
-        print(getattr(serviceprotocol,field))
         if getattr(serviceprotocol,field) == True:
             LIST_STYLE.add('BACKGROUND',(0,0),(0,0),colors.black)
         #Lagg till allt
