@@ -6,11 +6,13 @@ class ServiceprotocolForm(forms.ModelForm):
 
     additional = forms.CharField(
             max_length = 750,
+            required=False,
             widget = forms.Textarea
         )
 
     comment = forms.CharField(
             max_length = 750,
+            required=False,
             widget = forms.Textarea
         )
 

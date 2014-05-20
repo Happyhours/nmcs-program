@@ -9,6 +9,8 @@ from django.core.urlresolvers import reverse
 from django.forms.models import inlineformset_factory
 from django import forms
 
+from itertools import zip_longest
+
 # Create your views here.
 from .models import (
     Customer,
@@ -208,8 +210,18 @@ class CustomerDetailView(generic.detail.DetailView):
     def get_context_data(self, **kwargs):
         context = super(CustomerDetailView, self).get_context_data(**kwargs)
 
+        #izip_longest('ABCD', 'xy', fillvalue='-')
+        combined_lists = zip_longest(self.get_object().serviceprotocol_set.all(), self.get_object().workorder_set.all(), fillvalue='-')
         #Fetch serviceprotocols and add to context
-        context['serviceprotocols'] = self.get_object().serviceprotocol_set.all()
+        #context['serviceprotocols'] = self.get_object().serviceprotocol_set.all()
+        #print(combined_lists)
+
+        #for i,j in combined_lists:
+        #    print(i.pk,j)
+        #Fetch workorders and add to context
+        #context['workorders'] = self.get_object().workorder_set.all()
+
+        context['combined_lists'] = combined_lists
 
         # Check if customer has a mc
         if self.get_object().mc_set.all().filter(active=True):

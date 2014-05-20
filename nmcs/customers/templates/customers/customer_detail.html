@@ -133,23 +133,29 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {% if serviceprotocols %}
-                        {% for service in serviceprotocols %}
-                        
+
+
+
+                    {% if combined_lists %}
+
+                        {% for service, work in combined_lists %}
+
+
                         <tr class="success">
                             <td class="text-center">
-                                <a href="{% url 'service-update' service.pk %}">
-                                    {{ service.date }} UPDATEVIEW
+                                <a href="#">
+                                    {{ service }}
                                 </a>
                             </td>
  
                             <td class="text-center">
-                                <a href="{% url 'service-detail' service.pk %}">
-                                    {{ service.date }} - DETAILVIEW
+                                <a href="#">
+                                    {{ work }}
                                 </a>
                             </td>       
                         </tr>
-                        {% endfor%}
+                        {% endfor %}
+                        
                     {% endif %}
                     </tbody>
                 </table>
@@ -167,7 +173,7 @@
         </div><!-- /.col-md-12" -->
         <div class="col-md-4 col-md-offset-2">
 
-            <a class="btn btn-default" href="{% url 'work-pdf' %}" role="button">
+            <a class="btn btn-default" href="{% url 'work-create' customer_detail.pk %}" role="button">
                 Ny arbetsorder
             </a>         
 

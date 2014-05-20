@@ -44,4 +44,4 @@ class Serviceprotocol(models.Model):
 
 
     def __str__(self):
-        return self.employee
+        return "%s - %s" % (self.employee, self.date)
