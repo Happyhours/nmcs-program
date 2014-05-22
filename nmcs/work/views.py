@@ -20,6 +20,7 @@ from .forms import (
 
 from customers.models import Customer
 
+
 class WorkDetailView(DetailView):
     model = Workorder
     template_name = 'work/work_detail.html'
@@ -88,6 +89,7 @@ def workUpdateView(request, *args, **kwargs):
 
                 #Also modify the real motorcykle and not only the form temporary values!
                 mc.model.model = workorder_form.cleaned_data['model']
+                mc.model.brand = workorder_form.cleaned_data['brand']
                 mc.year = workorder_form.cleaned_data['year']
                 mc.km = workorder_form.cleaned_data['km']
                 mc.motor = workorder_form.cleaned_data['motor']
@@ -112,6 +114,7 @@ def workUpdateView(request, *args, **kwargs):
 
                 #Also modify the real motorcykle and not only the form temporary values!
                 mc.model.model = workorder_form.cleaned_data['model']
+                mc.model.brand = workorder_form.cleaned_data['brand']
                 mc.year = workorder_form.cleaned_data['year']
                 mc.km = workorder_form.cleaned_data['km']
                 mc.motor = workorder_form.cleaned_data['motor']
@@ -139,6 +142,7 @@ def workUpdateView(request, *args, **kwargs):
 
                 #Also modify the real motorcykle and not only the form temporary values!
                 mc.model.model = workorder_form.cleaned_data['model']
+                mc.model.brand = workorder_form.cleaned_data['brand']
                 mc.year = workorder_form.cleaned_data['year']
                 mc.km = workorder_form.cleaned_data['km']
                 mc.motor = workorder_form.cleaned_data['motor']
@@ -217,6 +221,8 @@ def workCreateView(request, workorder=None, *args, **kwargs):
             if workorder == None:
                 #Workorder does not exist, create one.
                 print("workorder == None")
+                print(workorder_form.is_valid())
+                print(workorder_form.errors)
                 if article_form.is_valid() and workorder_form.is_valid():
                     #Both forms are valid
                     #print("Valid forms")
@@ -233,6 +239,7 @@ def workCreateView(request, workorder=None, *args, **kwargs):
 
                     #Also modify the real motorcykle and not only the form temporary values!
                     mc.model.model = workorder_form.cleaned_data['model']
+                    mc.model.brand = workorder_form.cleaned_data['brand']
                     mc.year = workorder_form.cleaned_data['year']
                     mc.km = workorder_form.cleaned_data['km']
                     mc.motor = workorder_form.cleaned_data['motor']
@@ -244,7 +251,7 @@ def workCreateView(request, workorder=None, *args, **kwargs):
 
                 else:
                     #Not valid forms
-                    #print("NOT VALID FORMS")
+                    print("NOT VALID FORMS")
                     pass
 
             else:
@@ -262,6 +269,7 @@ def workCreateView(request, workorder=None, *args, **kwargs):
 
                     #Also modify the real motorcykle and not only the form temporary values!
                     mc.model.model = workorder_form.cleaned_data['model']
+                    mc.model.brand = workorder_form.cleaned_data['brand']
                     mc.year = workorder_form.cleaned_data['year']
                     mc.km = workorder_form.cleaned_data['km']
                     mc.motor = workorder_form.cleaned_data['motor']
@@ -292,6 +300,7 @@ def workCreateView(request, workorder=None, *args, **kwargs):
 
                 #Also modify the real motorcykle and not only the form temporary values!
                 mc.model.model = workorder_form.cleaned_data['model']
+                mc.model.brand = workorder_form.cleaned_data['brand']
                 mc.year = workorder_form.cleaned_data['year']
                 mc.km = workorder_form.cleaned_data['km']
                 mc.motor = workorder_form.cleaned_data['motor']
@@ -325,6 +334,7 @@ def workCreateView(request, workorder=None, *args, **kwargs):
 
                 #Also modify the real motorcykle and not only the form temporary values!
                 mc.model.model = workorder_form.cleaned_data['model']
+                mc.model.brand = workorder_form.cleaned_data['brand']
                 mc.year = workorder_form.cleaned_data['year']
                 mc.km = workorder_form.cleaned_data['km']
                 mc.motor = workorder_form.cleaned_data['motor']
@@ -368,10 +378,11 @@ def workCreateView(request, workorder=None, *args, **kwargs):
             articles_form = ArticlesForm(prefix="articles")
             article_form = ArticleForm(prefix='article')
             workorder_form = WorkorderForm(prefix='workorder', initial = {
+                                                    'brand': mc.model.brand,
                                                     'model': mc.model.model,
                                                     'year': mc.year,
                                                     'km': mc.km,
-                                                    'motor': mc.km})
+                                                    'motor': mc.motor})
     print(workorder_calculations)
     return render(request, 'work/work_create.html', 
         {'pk': 1, 
@@ -434,10 +445,10 @@ def some_view3(request, *args, **kwargs):
     frameTable2 = Frame(x1=3.8*inch, y1=6.25*inch, width=4.7*inch, height=3.95*inch)
 
     #Articles
-    frameTable3 = Frame(x1=0*inch, y1=2.0*inch, width=8.5*inch, height=4.25*inch)
+    frameTable3 = Frame(x1=0*inch, y1=2.0*inch, width=8.5*inch, height=4.50*inch)
 
-    frameTable4 = Frame(x1=0.0*inch, y1=0.7*inch, width=4.25*inch, height=1.3*inch)
-    frameTable5 = Frame(x1=4.25*inch, y1=0.7*inch, width=4.25*inch, height=1.3*inch)
+    frameTable4 = Frame(x1=0.2*inch, y1=0.7*inch, width=4.25*inch, height=1.3*inch)
+    frameTable5 = Frame(x1=4.48*inch, y1=0.7*inch, width=4.25*inch, height=1.3*inch)
 
 
     frameTable6 = Frame(x1=0.4*inch, y1=0.0*inch, width=1.6*inch, height=0.7*inch)
@@ -493,7 +504,7 @@ def some_view3(request, *args, **kwargs):
     ###############################################################
     #Hamta modeller som kommer anvandas fran databasen
 
-    #serviceprotocol = Serviceprotocol.objects.get(pk=kwargs.get('pk', None))
+    workorder = Workorder.objects.get(pk=kwargs.get('pk', None))
 
     #Serviceprotocol.objects.get(pk=kwargs.get('pk', None))
     #print(Serviceprotocol) 
@@ -522,7 +533,7 @@ def some_view3(request, *args, **kwargs):
 
     ###############################################################
     #DATUM
-    data = [['Datum:', '5/5/2014']]
+    data = [['Datum:', workorder.date]]
     a=Table(data,style=[
                         #('BOX',(0,0),(-1,-1),2,colors.black),
                         ('LINEBELOW',(0,0),(1,0),1,colors.black),
@@ -560,23 +571,25 @@ def some_view3(request, *args, **kwargs):
 
     ###############################################################
     #Customer and motorcykle information
-    foo = 'Blablabla bla bla blall bllalall bla bla blall bllalall bla bal Blablabla bla bla blall bllalall bla bal Blablabla bla bla blall bllalall bla bal Blablabla bla bla blall bllalall bla bal bla bal bla b !MAX 4 RADER!'
-    bar = 'Foo Bar foobar foobar fo bar fofofo bar Foo Bar foobar foobar fo bar fofofo bar Foo Bar foobar foobar fo bar fofofo bar Foo Bar foobar foobar fo bar fofofo bar fo bar fofofo bar !MAX 4 RADER!'
+    #foo = 'Blablabla bla bla blall bllalall bla bla blall bllalall bla bal Blablabla bla bla blall bllalall bla bal Blablabla bla bla blall bllalall bla bal Blablabla bla bla blall bllalall bla bal bla bal bla b !MAX 4 RADER!'
+    #bar = 'Foo Bar foobar foobar fo bar fofofo bar Foo Bar foobar foobar fo bar fofofo bar Foo Bar foobar foobar fo bar fofofo bar Foo Bar foobar foobar fo bar fofofo bar fo bar fofofo bar !MAX 4 RADER!'
 
-    p1 = Paragraph("%s" % foo, styleSheet["BodyText"])
-    p2 = Paragraph("%s" % bar, styleSheet["BodyText"])
 
-    data = [['Kund:', 'Kalle Anka'],
-            ['Adress:', 'Drabantgatan 22 A'],
-            ['Telefon:', '0767774164'],
-            ['Mc:', 'Harley Davidsson aa'],
-            ['Modell:', 'TRIUMPH CIVIC'],
-            ['År:', '2014'],
-            ['Motor:', 'NXT-3 AA4'],
+
+    p1 = Paragraph("%s" % workorder.job, styleSheet["BodyText"])
+    p2 = Paragraph("%s" % workorder.notification, styleSheet["BodyText"])
+
+    data = [['Kund:', workorder.customer.first_name + " " + workorder.customer.last_name],
+            ['Adress:', workorder.customer.street],
+            ['Telefon:', workorder.customer.telephone_set.all()[0]],
+            ['Mc:', workorder.brand],
+            ['Modell:', workorder.model],
+            ['År:', workorder.year],
+            ['Motor:', workorder.motor],
             ['Arbete:', p1],
             ['Anm:', p2],
-            ['Regnr:', 'ABC123'],
-            ['Km:', '9999']]
+            ['Regnr:', workorder.registration_nr],
+            ['Km:', workorder.km]]
 
     c=Table(data,style=[        #(col, row)
                         #('GRID',(0,0),(-1,-1),2,colors.black),
@@ -606,7 +619,7 @@ def some_view3(request, *args, **kwargs):
     ])
     d._argW[0]=1.0*inch
     d._argW[1]=1.0*inch
-    d._argW[2]=3.5*inch
+    d._argW[2]=3.0*inch
     d._argW[3]=1.0*inch
     d._argW[4]=1.0*inch
 
@@ -615,24 +628,29 @@ def some_view3(request, *args, **kwargs):
 
     #For varje artikel lagg till rad med information
     #MAX 15 articles
-    counter = 0
-    for articles in range(10):
-        counter += 1
-        data = [['', '', '', '', '']]
+
+    existing_articles = int(workorder.article_set.all().count())
+    max_articles = 15
+    #Check if workorder has any articles
+     
+    #counter = 0
+    for article in workorder.article_set.all():
+        #counter += 1
+        data = [[article.article_nr, article.quantity, article.description, article.price, article.price_total ]]
         e=Table(data,style=[        #(col, row)
                             ('GRID',(0,0),(-1,-1),2,colors.black),
                             ('ALIGN',(0,0),(-1,-1),'LEFT'),             
         ])
         e._argW[0]=1.0*inch
         e._argW[1]=1.0*inch
-        e._argW[2]=3.5*inch
+        e._argW[2]=3.0*inch
         e._argW[3]=1.0*inch
         e._argW[4]=1.0*inch
 
         elements.append(e)
 
     #Calculate how many empty rows to fill up
-    rest = (15 - counter)
+    rest = (max_articles - existing_articles)
     for empty_articles in range(rest):
         data = [['', '', '', '', '']]
         e=Table(data,style=[        #(col, row)
@@ -641,7 +659,7 @@ def some_view3(request, *args, **kwargs):
         ])
         e._argW[0]=1.0*inch
         e._argW[1]=1.0*inch
-        e._argW[2]=3.5*inch
+        e._argW[2]=3.0*inch
         e._argW[3]=1.0*inch
         e._argW[4]=1.0*inch
 
@@ -652,9 +670,9 @@ def some_view3(request, *args, **kwargs):
 
     ###############################################################
     #Anmarkning
-    foo = "asfadf asdasd asd asdas sadsa d s dsd  s d sds ds sdsss sd sds ss sfadf asdasd asd asdas sadsa d s dsd  s d sds ds sdsss sd sds ss sfadf asdasd asd asdas sadsa d s dsd  s d sds ds !MAX 4 RADER!"
+    #foo = "asfadf asdasd asd asdas sadsa d s dsd  s d sds ds sdsss sd sds ss sfadf asdasd asd asdas sadsa d s dsd  s d sds ds sdsss sd sds ss sfadf asdasd asd asdas sadsa d s dsd  s d sds ds !MAX 4 RADER!"
 
-    p3 = Paragraph("%s" % foo, styleSheet["BodyText"])
+    p3 = Paragraph("%s" % workorder.comment, styleSheet["BodyText"])
 
     data = [['Anmärkning.'],
             [p3]]
@@ -674,10 +692,12 @@ def some_view3(request, *args, **kwargs):
     ###############################################################
     #Summering
 
-    data = [['Fö. Matr..', ''],
-            ['Summa', ''],
-            ['Moms:', ''],
-            ['Att betala:', '']]
+    cal = workorder.workorder_calculations()
+
+    data = [['Fö. Matr..', cal['expendables']],
+            ['Summa', cal['sum']],
+            ['Moms:', cal['vat']],
+            ['Att betala:', cal['total']]]
 
     g=Table(data,style=[        #(col, row)
                         ('GRID',(1,0),(-1,-1),2,colors.black),

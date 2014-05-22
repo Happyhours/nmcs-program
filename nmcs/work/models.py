@@ -12,6 +12,7 @@ class Workorder(models.Model):
     notification = models.TextField(blank=True)
     comment = models.TextField(blank=True)
 
+    brand = models.CharField(max_length=50)
     model = models.CharField(max_length=50)
     year = models.CharField(max_length=50)
     km = models.CharField(max_length=50)

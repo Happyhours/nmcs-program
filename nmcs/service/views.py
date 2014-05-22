@@ -16,11 +16,6 @@ from .forms import (
 
 from customers.models import Customer
 
-#class ServiceCreateView(CreateView):
-
-def TestCreateView(request, *args, **kwargs):
-    return render(request, 'service/service_create.html', {})
-
 
 class ServiceCreateView(CreateView):
     model = Serviceprotocol
@@ -110,22 +105,19 @@ class ServiceDetailView(DetailView):
         return context
 
 
-
-
 class ServiceDeleteView(DeleteView):
     model = Serviceprotocol
     template_name = 'service/service_confirm_delete.html'
 
-
     def get_success_url(self):
         return reverse('customer-detail', kwargs={'pk': self.object.customer.pk})
-
 
 
 def some_view(request, *args, **kwargs):
     from reportlab.pdfgen import canvas
     from reportlab.platypus import Image
     from django.http import HttpResponse
+    
     #Hack for printing it directly instead
     #from reportlab.pdfbase import pdfdoc
     #pdfdoc.PDFCatalog.OpenAction = '<</S/JavaScript/JS(this.print\({bUI:true,bSilent:false,bShrinkToFit:true}\);)>>'

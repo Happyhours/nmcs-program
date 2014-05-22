@@ -67,7 +67,7 @@
 
             <div class="col-md-6" style="border: 2px solid green">
                 {% for fields in workorder_form %}
-                    {% if forloop.counter == 1 or forloop.counter == 2 or forloop.counter == 3 or forloop.counter == 4 %}
+                    {% if forloop.counter == 1 or forloop.counter == 2 or forloop.counter == 3 or forloop.counter == 4 or forloop.counter == 5 %}
                             
 
 
@@ -171,6 +171,9 @@
 
             <div class="form-group">
                 <div class="col-md-offset-8 col-md-4">
+                <a class="btn btn-default" href="{% url 'work-detail' workorder_pk %}" role="button">
+                    Tillbaka
+                </a>
                     <button type="submit" name="save_workorder" class="btn btn-default">Spara</button>
                     <a class="btn btn-default" href="{% url 'work-update' pk workorder_pk %}" role="button">Rensa</a>
                 </div>

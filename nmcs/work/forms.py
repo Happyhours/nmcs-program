@@ -7,6 +7,7 @@ class WorkorderForm(forms.ModelForm):
     class Meta:
         model = Workorder
         fields = [
+            'brand',
             'model',
             'year',
             'km',
@@ -38,7 +39,7 @@ class WorkorderForm(forms.ModelForm):
             max_length = 200,
             required=False,
             widget = forms.Textarea(
-                           attrs={'rows': 10,
+                           attrs={'rows': 12,
                                   'cols': 40,
                                   #'style': 'height: 1em;'
                                   })

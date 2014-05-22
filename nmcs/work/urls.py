@@ -34,7 +34,7 @@ urlpatterns = patterns('',
         name='work-delete'
     ),
     url(
-        r'^pdf/$',
+        r'^pdf/(?P<pk>\d+)$',
         views.some_view3,
         name='work-pdf'
     ),
