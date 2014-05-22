@@ -53,15 +53,12 @@
             </div><!-- /.col-md-12" -->
 
             <div class="form-group">
-                <div class="col-md-offset-8 col-md-4">
-                    <a class="btn btn-default" href="{% url 'service-detail' object.pk %}" role="button">
-                        Tillbaka
-                    </a>   
+                <div class="col-md-offset-8 col-md-4">  
                     <button type="submit" value="Submit" class="btn btn-default">
-                        Add
+                        Spara
                     </button>
-                    <a class="btn btn-default" href="{% url 'service-create' pk %}" role="button">
-                        Clear
+                    <a class="btn btn-default" href="{% url 'service-update' pk %}" role="button">
+                        Rensa
                     </a>
                 </div>
             </div>  

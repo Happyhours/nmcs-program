@@ -98,6 +98,21 @@
 
             </div><!-- /.col-md-6" -->
 
+            <div class="col-md-6" style="border: 2px solid red">
+                    {% if workorder_form.comment.errors %}
+                        <div class="form-group has-error">
+                    {% else %}
+                        <div class="form-group">
+                    {% endif %}
+                    <label for="{{ workorder_form.comment.id_for_label }}" class="col-md-2 control-label">{{ workorder_form.comment.label }}</label>
+                    <div class="col-md-4">
+                    {{ workorder_form.comment }}
+                    {% for error in workorder_form.comment.errors %}
+                        <strong>{{ error|escape }}</strong>
+                    {% endfor %}
+                    </div><!-- /col-md-4" -->
+                    </div><!-- /form-group" -->
+            </div><!-- /.col-md-6" -->
 
             <div class="col-md-6" style="border: 2px solid blue">
                     {% if workorder_form.job.errors %}
@@ -130,6 +145,27 @@
                     {% endfor %}
                     </div><!-- /col-md-4" -->
                     </div><!-- /form-group" -->
+            </div><!-- /.col-md-6" -->
+
+            <div class="col-md-6 col-md-offset-6" style="border: 2px solid yellow">
+                <div class="form-group">
+                    <label for="id_registration_nr" class="col-md-6 control-label">Fö.Matr..</label>
+                    <div class="col-md-6">
+                        <p class="form-control-static">{{ workorder_calculations.expendables }}</p> 
+                    </div>
+                    <label for="id_registration_nr" class="col-md-6 control-label">Summa</label>
+                    <div class="col-md-6">
+                        <p class="form-control-static">{{ workorder_calculations.sum }}</p> 
+                    </div>
+                    <label for="id_registration_nr" class="col-md-6 control-label">Moms</label>
+                    <div class="col-md-6">
+                        <p class="form-control-static">{{ workorder_calculations.vat }}</p> 
+                    </div>
+                    <label for="id_registration_nr" class="col-md-6 control-label">Att betala</label>
+                    <div class="col-md-6">
+                        <p class="form-control-static">{{ workorder_calculations.total }}</p> 
+                    </div>
+                </div>
             </div><!-- /.col-md-6" -->
 
 

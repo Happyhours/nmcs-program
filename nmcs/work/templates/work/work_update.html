@@ -1,0 +1,191 @@
+{% extends "base_customer.html" %}
+
+{% block content %}
+<div class="panel-body">
+    <div class="row">
+
+
+        <div class="col-md-12" style="border: 2px solid green">
+            <div class="page-header">
+                <h1>Workorder</h1>
+            </div>
+        </div><!-- /.col-md-12" -->
+
+        <form class="form-horizontal" role="form" action="#" method="POST">{% csrf_token %}
+          
+            <div class="col-md-6" style="border: 2px solid pink">
+                <div class="form-group">
+                      
+
+                    {% for fields in article_form %}
+
+                        {% if fields.errors %}
+                        <div class="form-group has-error">
+                        {% else %}
+                        <div class="form-group">
+                        {% endif %}
+                        <label for="{{ fields.id_for_label }}" class="col-md-3 control-label">{{ fields.label }}</label>
+                        <div class="col-md-3">
+                        {{ fields }}
+                        {% for error in fields.errors %}
+                            <strong>{{ error|escape }}</strong>
+                        {% endfor %}
+                        </div>
+                        </div>
+
+                    {% endfor %}
+                    <div class="col-md-6">
+                        <button type="submit" name="add_article" class="btn btn-default">Lägg till</button>
+                    </div>
+                </div>  
+            </div><!-- /.col-md-6" -->
+
+       
+
+        
+            <div class="col-md-6" style="border: 2px solid purple">
+                <div class="form-group">
+
+                    {% if articles_form %}
+                    
+                    <div class="col-md-12">
+                        <label class="sr-only" for="id_articles-articles">articles</label>
+                        {% for fields in articles_form %}
+                            {{ fields }}
+                        {% endfor %}
+                    </div>
+                
+                    <div class="col-md-6">
+                        <button type="submit" name="remove_article" class="btn btn-default">Ta bort</button>
+                    </div>
+                
+                    {% endif %}
+
+                </div>  
+            </div><!-- /.col-md-6" -->
+
+
+            <div class="col-md-6" style="border: 2px solid green">
+                {% for fields in workorder_form %}
+                    {% if forloop.counter == 1 or forloop.counter == 2 or forloop.counter == 3 or forloop.counter == 4 %}
+                            
+
+
+                    {% if fields.errors %}
+                        <div class="form-group has-error">
+                    {% else %}
+                        <div class="form-group">
+                    {% endif %}
+                    <label for="{{ fields.id_for_label }}" class="col-md-3 control-label">{{ fields.label }}</label>
+                    <div class="col-md-3">
+                    {{ fields }}
+                    {% for error in fields.errors %}
+                        <strong>{{ error|escape }}</strong>
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                {% endfor %}
+
+                    <div class="form-group">
+                        <label for="id_registration_nr" class="col-md-3 control-label">Regnr</label>
+                        <div class="col-md-3">
+                            <p class="form-control-static">{{reg}}</p> 
+                        </div>
+                    </div>
+ 
+
+            </div><!-- /.col-md-6" -->
+
+            <div class="col-md-6" style="border: 2px solid red">
+                    {% if workorder_form.comment.errors %}
+                        <div class="form-group has-error">
+                    {% else %}
+                        <div class="form-group">
+                    {% endif %}
+                    <label for="{{ workorder_form.comment.id_for_label }}" class="col-md-2 control-label">{{ workorder_form.comment.label }}</label>
+                    <div class="col-md-4">
+                    {{ workorder_form.comment }}
+                    {% for error in workorder_form.comment.errors %}
+                        <strong>{{ error|escape }}</strong>
+                    {% endfor %}
+                    </div><!-- /col-md-4" -->
+                    </div><!-- /form-group" -->
+            </div><!-- /.col-md-6" -->
+
+            <div class="col-md-6" style="border: 2px solid blue">
+                    {% if workorder_form.job.errors %}
+                        <div class="form-group has-error">
+                    {% else %}
+                        <div class="form-group">
+                    {% endif %}
+                    <label for="{{ workorder_form.job.id_for_label }}" class="col-md-2 control-label">{{ workorder_form.job.label }}</label>
+                    <div class="col-md-4">
+                    {{ workorder_form.job }}
+                    {% for error in workorder_form.job.errors %}
+                        <strong>{{ error|escape }}</strong>
+                    {% endfor %}
+                    </div><!-- /col-md-4" -->
+                    </div><!-- /form-group" -->
+            </div><!-- /.col-md-6" -->
+
+
+            <div class="col-md-6" style="border: 2px solid red">
+                    {% if workorder_form.notification.errors %}
+                        <div class="form-group has-error">
+                    {% else %}
+                        <div class="form-group">
+                    {% endif %}
+                    <label for="{{ workorder_form.notification.id_for_label }}" class="col-md-2 control-label">{{ workorder_form.notification.label }}</label>
+                    <div class="col-md-4">
+                    {{ workorder_form.notification }}
+                    {% for error in workorder_form.notification.errors %}
+                        <strong>{{ error|escape }}</strong>
+                    {% endfor %}
+                    </div><!-- /col-md-4" -->
+                    </div><!-- /form-group" -->
+            </div><!-- /.col-md-6" -->
+
+            <div class="col-md-6 col-md-offset-6" style="border: 2px solid yellow">
+                <div class="form-group">
+                    <label for="id_registration_nr" class="col-md-6 control-label">Fö.Matr..</label>
+                    <div class="col-md-6">
+                        <p class="form-control-static">{{ workorder_calculations.expendables }}</p> 
+                    </div>
+                    <label for="id_registration_nr" class="col-md-6 control-label">Summa</label>
+                    <div class="col-md-6">
+                        <p class="form-control-static">{{ workorder_calculations.sum }}</p> 
+                    </div>
+                    <label for="id_registration_nr" class="col-md-6 control-label">Moms</label>
+                    <div class="col-md-6">
+                        <p class="form-control-static">{{ workorder_calculations.vat }}</p> 
+                    </div>
+                    <label for="id_registration_nr" class="col-md-6 control-label">Att betala</label>
+                    <div class="col-md-6">
+                        <p class="form-control-static">{{ workorder_calculations.total }}</p> 
+                    </div>
+                </div>
+            </div><!-- /.col-md-6" -->
+
+
+            <div class="form-group">
+                <div class="col-md-offset-8 col-md-4">
+                    <button type="submit" name="save_workorder" class="btn btn-default">Spara</button>
+                    <a class="btn btn-default" href="{% url 'work-update' pk workorder_pk %}" role="button">Rensa</a>
+                </div>
+            </div>  
+     
+        </form>
+
+    </div><!-- /.row -->
+
+
+</div><!-- /.panel-body-->
+
+<div class="panel-footer">
+    <p class="text-center">...</p>
+</div><!-- /.panel-footer--> 
+
+
+{% endblock%}

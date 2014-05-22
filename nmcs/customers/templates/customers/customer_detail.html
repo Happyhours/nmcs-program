@@ -143,13 +143,21 @@
 
                         <tr class="success">
                             <td class="text-center">
-                                <a href="#">
+                                {% if service == "-" %}
+                                    <a href="#">
+                                {% else %}
+                                    <a href="{% url 'service-detail' service.pk %}">
+                                {% endif %}
                                     {{ service }}
                                 </a>
                             </td>
  
                             <td class="text-center">
-                                <a href="#">
+                                {% if work == "-" %}
+                                    <a href="#">
+                                {% else %}
+                                    <a href="{% url 'work-detail' work.pk %}">
+                                {% endif %}
                                     {{ work }}
                                 </a>
                             </td>       

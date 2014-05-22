@@ -53,7 +53,7 @@ class Customer(models.Model):
 
     class Meta:
         ordering = ['first_name']
-        pass
+        
 
 class Telephone(models.Model):
     number = models.CharField(max_length=50)

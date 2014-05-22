@@ -16,6 +16,34 @@ class WorkorderForm(forms.ModelForm):
             'comment',
         ]
 
+    job = forms.CharField(
+            max_length = 200,
+            required=False,
+            widget = forms.Textarea(
+                           attrs={'rows': 6,
+                                  'cols': 40,
+                                  #'style': 'height: 1em;'
+                                  })
+        )
+    notification = forms.CharField(
+            max_length = 200,
+            required=False,
+            widget = forms.Textarea(
+                           attrs={'rows': 6,
+                                  'cols': 40,
+                                  #'style': 'height: 1em;'
+                                  })
+        )
+    comment = forms.CharField(
+            max_length = 200,
+            required=False,
+            widget = forms.Textarea(
+                           attrs={'rows': 10,
+                                  'cols': 40,
+                                  #'style': 'height: 1em;'
+                                  })
+        )
+
 class ArticleForm(forms.ModelForm):
     description = forms.CharField(
             max_length = 750,

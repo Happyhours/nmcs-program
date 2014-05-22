@@ -1,0 +1,166 @@
+{% extends "base_customer.html" %}
+
+{% block content %}
+<div class="panel-body">
+    <div class="row" style="border: 2px green solid">
+
+        <div class="col-md-12">
+                <h1 class="text-center">Arbetsorder</h1>
+        </div><!-- /.col-md-12" -->
+
+        <div class="col-md-4 col-md-offset-4">
+            <dl class="dl-horizontal">
+                <dt>Datum: </dt>
+                <dd>{{ object.date }}</dd>
+            </dl>
+        </div><!-- /.col-md-4 col-md-offset-4" -->
+
+        <div class="col-md-12">
+        </div><!-- /.col-md-4 col-md-offset-4" -->
+
+        <div class="col-md-5 col-md-offset-1">
+
+            <address>
+              <strong>Nilsson's MC Shop AB</strong><br>
+              Industrigatan 46<br>
+              58277 Linköping<br>
+              Tel 013-141459<br>
+              Verkstad Mob. 072-7141471<br>
+              ESD 2012<br>
+            </address>
+
+        </div><!-- /.col-md-6" -->
+    
+
+        <div class="col-md-5 col-md-offset-1">
+            <dl class="dl-horizontal">
+                <dt>Kund: </dt>
+                <dd>{{ object.customer.first_name }} {{ object.customer.last_name }}</dd>
+                <dt>Adress: </dt>
+                <dd>{{ object.customer.street }}</dd>
+                <dt>Telefon: </dt>
+                <dd>{{ object.customer.telephone_set.all.0 }}</dd>
+                <dt>Modell: </dt>
+                <dd>{{ object.model }}</dd>
+                <dt>År: </dt>
+                <dd>{{ object.year }}</dd>  
+                <dt>Motor:</dt>
+                <dd>{{ object.motor }}</dd>
+                <dt>Regnr: </dt>
+                <dd>{{ object.registration_nr }}</dd>
+                <dt>Km:</dt>
+                <dd>{{ object.km }}</dd>
+            </dl>
+            <dl class="dl">
+                <dt>Arbete:</dt>
+                <dd>{{ object.job }}</dd>
+                <dt>Anm.:</dt>
+                <dd>{{ object.notification }}</dd> 
+            </dl>
+
+        </div><!-- /.col-md-6" -->
+
+        <div class="col-md-10 col-md-offset-1">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="text-center">Art.nr.</th>
+                            <th class="text-center">Antal</th>
+                            <th class="text-center">Benämning</th>
+                            <th class="text-center">Pris st</th>
+                            <th class="text-center">Pris</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for article in articles %}
+                        <tr>
+                            <td class="text-center">
+                                {{ article.article_nr }}
+                            </td>
+                            <td class="text-center">
+                                {{ article.quantity }}
+                            </td>
+                            <td class="text-center">
+                                {{ article.description }}
+                            </td>
+                            <td class="text-center">
+                                {{ article.price }}
+                            </td>
+                            <td class="text-center">
+                                {{ article.price_total }}
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td class="text-center">
+                                
+                            </td>
+                            <td class="text-center">
+                                
+                            </td>
+                            <td class="text-center">
+                                
+                            </td>
+                            <td class="text-center">
+                                
+                            </td>
+                            <td class="text-center">
+                                
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+        </div><!-- /.col-md-12" -->
+
+        <div class="col-md-5 col-md-offset-1">
+            <dl class="dl">
+                <dt>Anmärkning:</dt>
+                <dd>{{ object.comment }}</dd>
+            </dl>
+        </div><!-- /.col-md-6" -->
+
+        <div class="col-md-5 col-md-offset-1">
+            <dl class="dl-horizontal">
+                <dt>Fö. Matr..</dt>
+                <dd>{{ workorder_calculations.expendables }}</dd>
+                <dt>Summa</dt>
+                <dd>{{ workorder_calculations.sum }}</dd> 
+                <dt>Moms</dt>
+                <dd>{{ workorder_calculations.vat }}</dd>
+                <dt>Att betala</dt>
+                <dd>{{ workorder_calculations.total }}</dd>
+            </dl>
+        </div><!-- /.col-md-6" -->
+    
+        <div class="col-md-offset-8 col-md-4">
+            <a class="btn btn-default" href="{% url 'customer-detail' object.customer.pk %}" role="button">
+                Tillbaka
+            </a>
+            <a class="btn btn-default" href="{% url 'work-update' object.customer.pk object.pk %}" role="button">
+                Ändra
+            </a>
+            <a class="btn btn-default" href="{% url 'work-delete' object.pk %}" role="button">
+                Ta bort
+            </a>
+        </div><!-- /.col-md-offset-8 col-md-4" -->
+        
+        <div class="col-md-offset-8 col-md-4">
+            <a class="btn btn-default" href="#" role="button">
+                Skriv ut
+            </a>    
+        </div><!-- /.col-md-12" -->
+
+
+    </div><!-- /.row -->
+
+
+</div><!-- /.panel-body-->
+
+<div class="panel-footer">
+    <p class="text-center">...</p>
+</div><!-- /.panel-footer--> 
+
+
+{% endblock%}

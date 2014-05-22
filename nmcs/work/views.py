@@ -4,6 +4,7 @@ from django.views import generic
 from django.http import HttpResponseRedirect
 from django.views.generic import TemplateView, UpdateView, DeleteView, CreateView, DetailView
 
+import decimal
 # Create your views here.
 
 from .models import (
@@ -19,6 +20,160 @@ from .forms import (
 
 from customers.models import Customer
 
+class WorkDetailView(DetailView):
+    model = Workorder
+    template_name = 'work/work_detail.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkDetailView, self).get_context_data(**kwargs)
+        context['pk'] = self.object.pk
+
+        articles = self.object.article_set.all()
+        context['articles'] = articles
+        context['workorder_calculations'] = self.object.workorder_calculations()
+
+        return context
+
+
+class WorkDeleteView(DeleteView):
+    model = Workorder
+    template_name = 'work/work_confirm_delete.html'
+
+
+    def get_success_url(self):
+        return reverse('customer-detail', kwargs={'pk': self.object.customer.pk})
+
+
+def workUpdateView(request, *args, **kwargs):
+
+    #Get in
+    pk = kwargs.get('pk', None)
+    workorder = kwargs.get('workorder', None)
+
+    #Fetch initial data globaly in view
+    customer = Customer.objects.get(pk=kwargs.get('pk', None))
+    mc = customer.get_active_mc()
+
+    #Data to return if there is a error in post and get is not called
+    #Check if workorder has any articles
+    workorder_tmp = Workorder.objects.get(pk=workorder)
+    if workorder_tmp.article_set.all():
+        #Populated listform for articles
+        articles_form = ArticlesForm(workorder_tmp.pk, prefix="articles")
+    else:
+        #Empty listform for articles
+        articles_form = ArticlesForm(prefix="articles")
+    workorder_calculations = workorder_tmp.workorder_calculations()
+
+
+    if request.method == 'POST':
+        #POST
+        #Get current intance of workorder and update it with data posted
+        #workorder_tmp = Workorder.objects.get(pk=workorder)
+        workorder_form = WorkorderForm(request.POST, instance=workorder_tmp, prefix='workorder')
+        article_form = ArticleForm(request.POST, prefix='article')
+
+
+        if 'add_article' in request.POST:
+            #Add article to something
+
+            if article_form.is_valid() and workorder_form.is_valid():
+                
+                workorder_model = workorder_form.save()
+
+                article = article_form.save(commit=False)
+                article.workorder = workorder_model
+                article.price_total = article_form.cleaned_data['price'] * decimal.Decimal(article_form.cleaned_data['quantity'])
+                article.save()
+
+                #Also modify the real motorcykle and not only the form temporary values!
+                mc.model.model = workorder_form.cleaned_data['model']
+                mc.year = workorder_form.cleaned_data['year']
+                mc.km = workorder_form.cleaned_data['km']
+                mc.motor = workorder_form.cleaned_data['motor']
+                mc.save()
+
+                return HttpResponseRedirect(reverse('work-update', kwargs={'pk': pk,'workorder': workorder}))
+
+            else:
+                #Not valid forms
+                pass
+
+
+        if 'save_workorder' in request.POST:
+
+            if workorder_form.is_valid():
+
+                workorder_model = workorder_form.save(commit=False)
+                #customer = Customer.objects.get(pk=kwargs.get('pk', None))
+                workorder_model.customer = customer
+                #workorder_model.registration_nr = mc.registration_nr
+                workorder_model.save()  
+
+                #Also modify the real motorcykle and not only the form temporary values!
+                mc.model.model = workorder_form.cleaned_data['model']
+                mc.year = workorder_form.cleaned_data['year']
+                mc.km = workorder_form.cleaned_data['km']
+                mc.motor = workorder_form.cleaned_data['motor']
+                mc.save()
+
+                return HttpResponseRedirect(reverse('work-detail', kwargs={'pk': workorder}))
+
+            else:
+                #Not valid forms
+                pass  
+
+        if 'remove_article' in request.POST:
+            if 'articles-articles' in request.POST and workorder_form.is_valid():
+                
+                #Security vunability
+                article_pk = int(request.POST.get('articles-articles', None))
+
+                try: 
+                    article = Article.objects.get(pk=request.POST.get('articles-articles', None))
+                    article.delete()
+                except Article.DoesNotExist:
+                    pass
+
+                workorder_model = workorder_form.save()
+
+                #Also modify the real motorcykle and not only the form temporary values!
+                mc.model.model = workorder_form.cleaned_data['model']
+                mc.year = workorder_form.cleaned_data['year']
+                mc.km = workorder_form.cleaned_data['km']
+                mc.motor = workorder_form.cleaned_data['motor']
+                mc.save()
+
+                return HttpResponseRedirect(reverse('work-update', kwargs={'pk': pk,'workorder': workorder}))
+
+    else:
+        #GET
+        workorder_model = Workorder.objects.get(pk=workorder)
+        workorder_form = WorkorderForm(instance=workorder_model, prefix='workorder')
+        #Form for creating a new article
+        article_form = ArticleForm(prefix='article')
+
+        #Check if workorder has any articles
+        if workorder_model.article_set.all():
+            #Populated listform for articles
+            articles_form = ArticlesForm(workorder_model.pk, prefix="articles")
+        else:
+            #Empty listform for articles
+            articles_form = ArticlesForm(prefix="articles")
+
+        workorder_calculations = workorder_model.workorder_calculations()
+
+
+    return render(request, 'work/work_update.html', 
+        {'pk': pk, 
+        'workorder_pk': workorder,
+        'article_form': article_form,
+        'workorder_form': workorder_form,
+        'reg': mc.registration_nr,
+        'articles_form': articles_form,
+        'workorder_calculations': workorder_calculations
+        })
+
 
 def workCreateView(request, workorder=None, *args, **kwargs):
 
@@ -30,22 +185,27 @@ def workCreateView(request, workorder=None, *args, **kwargs):
     if request.method=='POST':
 
         if workorder == None:
-            #If workorder does not exists already
-            print("1")
-            print(request.POST)
+            #If workorder does not exists
             article_form = ArticleForm(request.POST, prefix='article')
             workorder_form = WorkorderForm(request.POST, prefix='workorder')
-            #articles_form = ArticlesForm(request.POST, prefix="articles")
-            
+            #workorder_calculations = self.object.workorder_calculations()
+            #Default values if no articles
+            cal = {}
+            cal['sum'] = decimal.Decimal('0')
+            expendables = decimal.Decimal('0')
+            cal['expendables'] = expendables
+            vat_percentage = decimal.Decimal('0')
+            cal['vat'] = (cal['sum'] * vat_percentage)
+            cal['total'] = (cal['sum'] * vat_percentage) + expendables
+            workorder_calculations = cal
         else:
-            #If workorder exists already
+            #If workorder exists
             workorder_tmp = Workorder.objects.get(pk=workorder)
             workorder_form = WorkorderForm(request.POST, instance=workorder_tmp, prefix='workorder')
             article_form = ArticleForm(request.POST, prefix='article')
-            #articles_form = ArticlesForm(request.POST, prefix="articles")
 
-            print("test55")
-            print(article_form.is_valid())
+            workorder_calculations = workorder_tmp.workorder_calculations()
+
             #Check if customer has workorder has any articles
             if workorder_tmp.article_set.all():
                 articles_form = ArticlesForm(workorder_tmp.pk, prefix="articles")
@@ -59,14 +219,16 @@ def workCreateView(request, workorder=None, *args, **kwargs):
                 print("workorder == None")
                 if article_form.is_valid() and workorder_form.is_valid():
                     #Both forms are valid
-                    print("Valid forms")
+                    #print("Valid forms")
 
                     workorder_model = workorder_form.save(commit=False)
                     workorder_model.customer = None
+                    workorder_model.registration_nr = mc.registration_nr
                     workorder_model.save()
 
                     article = article_form.save(commit=False)
                     article.workorder = workorder_model
+                    article.price_total = article_form.cleaned_data['price'] * decimal.Decimal(article_form.cleaned_data['quantity'])
                     article.save()        
 
                     #Also modify the real motorcykle and not only the form temporary values!
@@ -82,7 +244,8 @@ def workCreateView(request, workorder=None, *args, **kwargs):
 
                 else:
                     #Not valid forms
-                    print("NOT VALID FORMS")
+                    #print("NOT VALID FORMS")
+                    pass
 
             else:
                 #Workorder already exist add article to it.
@@ -93,6 +256,7 @@ def workCreateView(request, workorder=None, *args, **kwargs):
 
                     article = article_form.save(commit=False)
                     article.workorder = workorder_model
+                    article.price_total = article_form.cleaned_data['price'] * decimal.Decimal(article_form.cleaned_data['quantity'])
                     article.save()
 
 
@@ -110,18 +274,20 @@ def workCreateView(request, workorder=None, *args, **kwargs):
 
                 else:
                     #Not valid forms
-                    print("ARTICLE_FORM NOT VALID")
+                    #print("ARTICLE_FORM NOT VALID")
+                    pass
 
 
         if 'save_workorder' in request.POST:
             #Save everything and connect customer to it
-            print('save_workorder, PRESSED')
+            #print('save_workorder, PRESSED')
 
             if workorder_form.is_valid():
 
                 workorder_model = workorder_form.save(commit=False)
                 #customer = Customer.objects.get(pk=kwargs.get('pk', None))
                 workorder_model.customer = customer
+                workorder_model.registration_nr = mc.registration_nr
                 workorder_model.save()  
 
                 #Also modify the real motorcykle and not only the form temporary values!
@@ -137,16 +303,15 @@ def workCreateView(request, workorder=None, *args, **kwargs):
 
             else:
                 #Not valid forms
-                print("NOT VALID FORMS")
-                print("2")           
+                #print("NOT VALID FORMS")
+                #print("2")
+                pass         
 
 
 
         if 'remove_article' in request.POST:
-            
-            print('remove_article, PRESSED')
-            
-            if 'articles-articles' in request.POST:
+            #print('remove_article, PRESSED')
+            if 'articles-articles' in request.POST and workorder_form.is_valid():
 
                 article_pk = int(request.POST.get('articles-articles', None))
 
@@ -156,40 +321,50 @@ def workCreateView(request, workorder=None, *args, **kwargs):
                 except Article.DoesNotExist:
                     pass
 
-                if workorder_form.is_valid():
-                        
-                    workorder_model = workorder_form.save()
+                workorder_model = workorder_form.save()
 
-                    #Also modify the real motorcykle and not only the form temporary values!
-                    mc.model.model = workorder_form.cleaned_data['model']
-                    mc.year = workorder_form.cleaned_data['year']
-                    mc.km = workorder_form.cleaned_data['km']
-                    mc.motor = workorder_form.cleaned_data['motor']
-                    mc.save()
+                #Also modify the real motorcykle and not only the form temporary values!
+                mc.model.model = workorder_form.cleaned_data['model']
+                mc.year = workorder_form.cleaned_data['year']
+                mc.km = workorder_form.cleaned_data['km']
+                mc.motor = workorder_form.cleaned_data['motor']
+                mc.save()
 
                 pk = kwargs.get('pk', None)
                 return HttpResponseRedirect(reverse('work-create', kwargs={'pk': pk,'workorder': workorder}))
                 
 
     else:
-        print('GET REQUEST')
-        print(workorder)
-
+        #GET
         if workorder != None:
-            print("3")
-            #If workorder exists already
+            #If workorder exists
             workorder_model = Workorder.objects.get(pk=workorder)
             workorder_form = WorkorderForm(instance=workorder_model, prefix='workorder')
             article_form = ArticleForm(prefix='article')
 
-            #Check if customer has workorder has any articles
+            workorder_calculations = workorder_model.workorder_calculations()
+            #Check if customer workorder has any articles
             if workorder_model.article_set.all():
                 articles_form = ArticlesForm(workorder_model.pk, prefix="articles")
             else:
                 articles_form = ArticlesForm(prefix="articles")
 
         else:
-            print("4")
+            #If workorder does not exist
+            #workorder_calculations = self.object.workorder_calculations()
+
+            workorder_calculations = {}
+
+            #Default values if no articles
+            cal = {}
+            cal['sum'] = decimal.Decimal('0')
+            expendables = decimal.Decimal('0')
+            cal['expendables'] = expendables
+            vat_percentage = decimal.Decimal('0')
+            cal['vat'] = (cal['sum'] * vat_percentage)
+            cal['total'] = (cal['sum'] * vat_percentage) + expendables
+            workorder_calculations = cal
+
             articles_form = ArticlesForm(prefix="articles")
             article_form = ArticleForm(prefix='article')
             workorder_form = WorkorderForm(prefix='workorder', initial = {
@@ -197,14 +372,15 @@ def workCreateView(request, workorder=None, *args, **kwargs):
                                                     'year': mc.year,
                                                     'km': mc.km,
                                                     'motor': mc.km})
-
-    print("5")
+    print(workorder_calculations)
     return render(request, 'work/work_create.html', 
         {'pk': 1, 
         'article_form': article_form,
         'workorder_form': workorder_form,
         'reg': mc.registration_nr,
-        'articles_form': articles_form })
+        'articles_form': articles_form,
+        'workorder_calculations': workorder_calculations
+        })
 
 
         #Check if the workorder for customer has any articles
@@ -212,84 +388,6 @@ def workCreateView(request, workorder=None, *args, **kwargs):
             #context['articles_form'] = ArticlesForm(self.object.pk, prefix="articles")
         #else:
         #    context['articles_form'] = []
-
-
-
-# # Check if customer has a mc
-# if self.get_object().mc_set.all().filter(active=True):
-#     #context['mc_form'] = ActiveMcForm(self.object.pk, initial = {'active_mc': self.object.mc_set.get(active=True)}, prefix="active_mc")
-#     initial = {'active_mc': self.object.mc_set.get(active=True)}
-#     context['mc_form'] = ActiveMcForm(customer_pk=self.object.pk, initial = {'active_mc': self.object.mc_set.get(active=True)})
-#     context['mc'] = self.object.mc_set.get(active=True)
-# else:
-#     context['mc_form'] = []
-#     context['mc'] = []
-
-
-
-
-
-class WorkCreateView(CreateView):
-    model = Workorder
-    form_class = WorkorderForm
-    template_name = 'work/work_create.html'
-
-    def get(self, request, *args, **kwargs):
-        """
-        Handles GET requests and instantiates a blank version of the form.
-        """
-        self.object = None
-
-        customer = Customer.objects.get(pk=self.kwargs.get(self.pk_url_kwarg, None))
-        mc = customer.get_active_mc()
-        self.initial = {'model': mc.model.model,
-                        'year': mc.year,
-                        'km': mc.km,
-                        'motor': mc.motor}
-
-        form_class = self.get_form_class()
-        form = self.get_form(form_class)
-        return self.render_to_response(self.get_context_data(form=form, reg=mc.registration_nr))
-
-    def get_success_url(self):
-        pk = self.kwargs.get(self.pk_url_kwarg, None)
-        return reverse('customer-detail', kwargs={'pk': pk})
-
-    def get_context_data(self, **kwargs):
-        context = super(WorkCreateView, self).get_context_data(**kwargs)
-
-        context['pk'] = self.kwargs.get(self.pk_url_kwarg, None)
-
-        context['article_form'] = ArticleForm
-
-        #Check if customer has workorder has any articles
-        #if self.get_object().article_set.all():
-            #context['articles_form'] = ArticlesForm(self.object.pk, prefix="articles")
-        #else:
-        #    context['articles_form'] = []
-
-        return context
-
-    def form_valid(self, form):
-        self.object = form.save(commit=False)
-        customer = Customer.objects.get(pk=self.kwargs.get(self.pk_url_kwarg, None))
-        #Fetch motorcykle
-        mc = customer.get_active_mc()
-        self.object.registration_nr = mc.registration_nr
-        self.object.customer = customer
-        self.object.save()
-
-        #Also modify the real motorcykle and not only the form temporary values!
-        mc.model.model = self.object.model
-        mc.year = self.object.year
-        mc.km = self.object.km
-        mc.motor = self.object.motor
-        mc.save()
-
-        
-
-        return HttpResponseRedirect(self.get_success_url())
-
 
 
 def some_view3(request, *args, **kwargs):
