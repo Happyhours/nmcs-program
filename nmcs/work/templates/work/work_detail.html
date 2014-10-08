@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="panel-body">
-    <div class="row" style="border: 2px green solid">
+    <div class="row">
 
         <div class="col-md-12">
                 <h1 class="text-center">Arbetsorder</h1>
@@ -149,7 +149,7 @@
         </div><!-- /.col-md-offset-8 col-md-4" -->
         
         <div class="col-md-offset-8 col-md-4">
-            <a class="btn btn-default" href="{% url 'work-pdf' object.pk %}" role="button">
+            <a class="btn btn-default" href="{% url 'work-pdf' object.pk %}" target="_blank" role="button">
                 Skriv ut
             </a>    
         </div><!-- /.col-md-12" -->

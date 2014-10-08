@@ -413,7 +413,7 @@ def some_view3(request, *args, **kwargs):
 
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+    #response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
 
     #A4 width = 8.5 inches
 

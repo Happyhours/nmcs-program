@@ -240,7 +240,7 @@ def some_view3(request, *args, **kwargs):
 
     # Create the HttpResponse object with the appropriate PDF headers.
     response = HttpResponse(content_type='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
+    #response['Content-Disposition'] = 'attachment; filename="somefilename.pdf"'
 
     #A4 width = 8.5 inches
 
@@ -328,7 +328,7 @@ def some_view3(request, *args, **kwargs):
 
     ###############################################################
     #DATUM
-    data = [['Datum:', '5/5/2014']]
+    data = [['Datum:', serviceprotocol.date]]
     a=Table(data,style=[
                         ('BOX',(0,0),(-1,-1),2,colors.black),
                         ('ALIGN',(0,0),(0,0),'CENTER'),
@@ -415,28 +415,84 @@ def some_view3(request, *args, **kwargs):
                     'blinkers_check',
                     'error_check',
     ]
+ 
+    service_fields2 = [
+                    'Oljebyte',
+                    'Motor',
+                    'Primär',
+                    'Vx.låda',
+                    'Kontroll premiärkedja + ev. justering',
+                    'Kontroll broms + kopplingscylindrar + slangar',
+                    'Byte broms + koppl. Vätskor',
+                    'Kontroll bromsklossar fram',
+                    'Kontroll bromsklossar bak',
+                    'Kontroll tändstift',
+                    'Byte tändstift',
+                    'Kontroll vajrar + smörjning',
+                    'Kontroll luftrenare',
+                    'Byte luftrenare',
+                    'Rengöring luftfilter KN-typ',
+                    'Kontroll belt - drivkedja + ev. justering - smörjning',
+                    'Kontroll däck + fälgar + lagar',
+                    'Lufttryck fram + bak',
+                    'Kontroll bränsle + oljeslangar',
+                    'Kontroll styrlager',
+                    'Smörjning styrlager',
+                    'Smörjning av stöd',
+                    'Kontroll belysning + blinkers + nivå justering',
+                    'Felkoder',
+    ]
+    
+    service_fields3 = [
+                    {'oil_check':'Oljebyte'},
+                    {'motor_check':'Motor'},
+                    {'primary_check':'Primär'},
+                    {'gearbox_check':'Vx.låda'},
+                    {'chain_check':'Kontroll premiärkedja + ev. justering'},
+                    {'cylinder_check':'Kontroll broms + kopplingscylindrar + slangar'},
+                    {'brakes_check':'Byte broms + koppl. Vätskor'},
+                    {'front_check':'Kontroll bromsklossar fram'},
+                    {'back_check':'Kontroll bromsklossar bak'},
+                    {'plug_check':'Kontroll tändstift'},
+                    {'rm_plug_check':'Byte tändstift'},
+                    {'grease_check':'Kontroll vajrar + smörjning'},
+                    {'air_check':'Kontroll luftrenare'},
+                    {'rm_air_check':'Byte luftrenare'},
+                    {'filter_check':'Rengöring luftfilter KN-typ'},
+                    {'belt_check':'Kontroll belt - drivkedja + ev. justering - smörjning'},
+                    {'tires_check':'Kontroll däck + fälgar + lagar'},
+                    {'pressure_check':'Lufttryck fram + bak'},
+                    {'fuel_check':'Kontroll bränsle + oljeslangar'},
+                    {'layer_check':'Kontroll styrlager'},
+                    {'rm_layer_check':'Smörjning styrlager'},
+                    {'support_check':'Smörjning av stöd'},
+                    {'blinkers_check':'Kontroll belysning + blinkers + nivå justering'},
+                    {'error_check':'Felkoder'},
+    ]
 
-    for field in service_fields:
-        data = [['', field]]
-        c=Table(data, 1*[0.3*inch], 1*[0.3*inch])
-        LIST_STYLE = TableStyle([
-                            ('BOX',(0,0),(0,0),2,colors.black),
-                            ('ALIGN',(0,0),(0,0),'LEFT'),
-                    ])
-        #Modefiera celler i efterhand.
-        if getattr(serviceprotocol,field) == True:
-            LIST_STYLE.add('BACKGROUND',(0,0),(0,0),colors.black)
-        #Lagg till allt
-        c.setStyle(LIST_STYLE)
-        #Satt width pa column 1 till 1*inch
-        c._argW[1]=1*inch
-        #Lagg till i flow
+    
+    for field in service_fields3:
+        for key, value in field.items():
+            data = [['', value]]
+            c=Table(data, 1*[0.3*inch], 1*[0.3*inch])
+            LIST_STYLE = TableStyle([
+                                ('BOX',(0,0),(0,0),2,colors.black),
+                                ('ALIGN',(0,0),(0,0),'LEFT'),
+                        ])
+            #Modefiera celler i efterhand.
+            if getattr(serviceprotocol,key) == True:
+                LIST_STYLE.add('BACKGROUND',(0,0),(0,0),colors.black)
+            #Lagg till allt
+            c.setStyle(LIST_STYLE)
+            #Satt width pa column 1 till 1*inch
+            c._argW[1]=1*inch
+            #Lagg till i flow
 
-        if field == 'oil_check' or field == 'motor_check' or field == 'primary_check' or field =='gearbox_check':
-            elements.append(c)
-            elements.append(FrameBreak())
-        else:
-            elements.append(c)
+            if key == 'oil_check' or key == 'motor_check' or key == 'primary_check' or key =='gearbox_check':
+                elements.append(c)
+                elements.append(FrameBreak())
+            else:
+                elements.append(c)
     elements.append(FrameBreak())
 
     ###############################################################
@@ -470,7 +526,7 @@ def some_view3(request, *args, **kwargs):
                         ('BOX',(0,0),(0,1),1.0,colors.black),
                         ('BOX',(0,2),(0,3),1.0,colors.black),
     ])
-    d._argW[0]=4.8*inch
+    d._argW[0]=3.8*inch
      
     elements.append(d)
     elements.append(FrameBreak())
