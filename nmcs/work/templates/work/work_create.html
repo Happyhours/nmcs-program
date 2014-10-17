@@ -149,21 +149,23 @@
 
             <div class="col-md-6 col-md-offset-6">
                 <div class="form-group">
+					<!--
                     <label for="id_registration_nr" class="col-md-6 control-label">Fö.Matr..</label>
                     <div class="col-md-6">
                         <p class="form-control-static">{{ workorder_calculations.expendables }}</p> 
                     </div>
+					-->
                     <label for="id_registration_nr" class="col-md-6 control-label">Summa</label>
                     <div class="col-md-6">
-                        <p class="form-control-static">{{ workorder_calculations.sum }}</p> 
+                        <p class="form-control-static">{{ workorder_calculations.sum|floatformat }}</p> 
                     </div>
                     <label for="id_registration_nr" class="col-md-6 control-label">Moms</label>
                     <div class="col-md-6">
-                        <p class="form-control-static">{{ workorder_calculations.vat }}</p> 
+                        <p class="form-control-static">{{ workorder_calculations.vat|floatformat }}</p> 
                     </div>
                     <label for="id_registration_nr" class="col-md-6 control-label">Att betala</label>
                     <div class="col-md-6">
-                        <p class="form-control-static">{{ workorder_calculations.total }}</p> 
+                        <p class="form-control-static">{{ workorder_calculations.total|floatformat }}</p> 
                     </div>
                 </div>
             </div><!-- /.col-md-6" -->
@@ -174,8 +176,8 @@
                     <a class="btn btn-default" href="{% url 'customer-detail' pk %}" role="button">
                         Tillbaka
                     </a>
-                    <button type="submit" name="save_workorder" class="btn btn-default">Add</button>
-                    <a class="btn btn-default" href="{% url 'work-create' pk %}" role="button">Clear</a>
+                    <button type="submit" name="save_workorder" class="btn btn-default">Skapa</button>
+                    <a class="btn btn-default" href="{% url 'work-create' pk %}" role="button">Rensa</a>
                 </div>
             </div>  
      

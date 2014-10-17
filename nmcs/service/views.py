@@ -372,11 +372,10 @@ def some_view3(request, *args, **kwargs):
     data = [["Nilsson's MC Shop AB"],
             ['Industrigatan 48'],
             ['58277 Linköping'],
-            ['Tel 013-141459'],
-            ['Mob. 072-7141471']]
+            ['Tel 013-141458']]
 
     f=Table(data,style=[        #(col, row)
-                        ('ALIGN',(0,0),(0,4),'CENTER'),
+                        ('ALIGN',(0,0),(0,3),'CENTER'),
                         
     ])
     #f._argW[0]=1.6*inch

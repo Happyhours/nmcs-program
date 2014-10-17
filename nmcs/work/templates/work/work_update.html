@@ -149,10 +149,12 @@
 
             <div class="col-md-6 col-md-offset-6">
                 <div class="form-group">
+				<!--
                     <label for="id_registration_nr" class="col-md-6 control-label">Fö.Matr..</label>
                     <div class="col-md-6">
                         <p class="form-control-static">{{ workorder_calculations.expendables }}</p> 
                     </div>
+				-->
                     <label for="id_registration_nr" class="col-md-6 control-label">Summa</label>
                     <div class="col-md-6">
                         <p class="form-control-static">{{ workorder_calculations.sum }}</p> 
@@ -175,7 +177,7 @@
                     Tillbaka
                 </a>
                     <button type="submit" name="save_workorder" class="btn btn-default">Spara</button>
-                    <a class="btn btn-default" href="{% url 'work-update' pk workorder_pk %}" role="button">Rensa</a>
+                    <!--<a class="btn btn-default" href="{% url 'work-update' pk workorder_pk %}" role="button">Rensa</a>-->
                 </div>
             </div>  
      

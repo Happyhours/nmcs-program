@@ -4,6 +4,7 @@ from customers.models import Customer
 
 import decimal
 
+
 # Create your models here.
 
 class Workorder(models.Model):
@@ -31,6 +32,8 @@ class Workorder(models.Model):
             #Calculate the sum of all articles for this workorder
             summ = decimal.Decimal('0')
             for article in articles:
+                print("price: ",article.price)
+                print("quantity: ",article.quantity)
                 total_price_of_articles = article.price * article.quantity
                 print("Total: ",total_price_of_articles)
                 summ += total_price_of_articles
@@ -38,9 +41,15 @@ class Workorder(models.Model):
             #Add and calculate from static values modified from Company app/model
             expendables = decimal.Decimal('0')
             cal['expendables'] = expendables
-            vat_percentage = decimal.Decimal('1.20')
-            cal['vat'] = (cal['sum']  * vat_percentage)
-            cal['total'] = (cal['sum'] * vat_percentage) + expendables 
+            # Vat percentage
+            vat_percentage = decimal.Decimal('1.25')
+            
+            totalen = cal['vat'] = (cal['sum']  * vat_percentage)
+            cal['vat'] = totalen - cal['sum']
+            
+            #cal['vat'] = (cal['sum']  * vat_percentage)
+            #cal['total'] = (cal['sum'] * vat_percentage) + expendables
+            cal['total'] = (cal['sum'] * vat_percentage)
         else:
             #Default values if no articles
             cal['sum'] = decimal.Decimal('0')
@@ -48,7 +57,8 @@ class Workorder(models.Model):
             cal['expendables'] = expendables
             vat_percentage = decimal.Decimal('0')
             cal['vat'] = (cal['sum'] * vat_percentage)
-            cal['total'] = (cal['sum'] * vat_percentage) + expendables
+            #cal['total'] = (cal['sum'] * vat_percentage) + expendables
+            cal['total'] = (cal['sum'] * vat_percentage)
 
         return cal
 
@@ -64,7 +74,7 @@ class Workorder(models.Model):
     #     new_active_mc.save()
 
     def __str__(self):
-        return str(self.date)
+        return "%s - %s" % (self.registration_nr, self.date)
 
 class Article(models.Model):
     quantity = models.PositiveIntegerField()

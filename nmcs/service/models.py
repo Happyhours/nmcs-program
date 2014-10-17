@@ -42,6 +42,5 @@ class Serviceprotocol(models.Model):
     customer = models.ForeignKey(Customer)
 
 
-
     def __str__(self):
-        return "%s - %s" % (self.employee, self.date)
+        return "%s - %s" % (self.registration_nr, self.date)

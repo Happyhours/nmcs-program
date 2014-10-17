@@ -21,6 +21,17 @@ from .forms import (
 from customers.models import Customer
 
 
+
+def remove_exponent(d):
+    '''Remove exponent and trailing zeros.
+
+    >>> remove_exponent(Decimal('5E+3'))
+    Decimal('5000')
+
+    '''
+    return d.quantize(decimal.Decimal(1)) if d == d.to_integral() else d.normalize()
+
+
 class WorkDetailView(DetailView):
     model = Workorder
     template_name = 'work/work_detail.html'
@@ -234,7 +245,7 @@ def workCreateView(request, workorder=None, *args, **kwargs):
 
                     article = article_form.save(commit=False)
                     article.workorder = workorder_model
-                    article.price_total = article_form.cleaned_data['price'] * decimal.Decimal(article_form.cleaned_data['quantity'])
+                    article.price_total = decimal.Decimal(article_form.cleaned_data['price']) * decimal.Decimal(article_form.cleaned_data['quantity'])
                     article.save()        
 
                     #Also modify the real motorcykle and not only the form temporary values!
@@ -263,7 +274,7 @@ def workCreateView(request, workorder=None, *args, **kwargs):
 
                     article = article_form.save(commit=False)
                     article.workorder = workorder_model
-                    article.price_total = article_form.cleaned_data['price'] * decimal.Decimal(article_form.cleaned_data['quantity'])
+                    article.price_total = decimal.Decimal(article_form.cleaned_data['price']) * decimal.Decimal(article_form.cleaned_data['quantity'])
                     article.save()
 
 
@@ -554,12 +565,12 @@ def some_view3(request, *args, **kwargs):
     data = [["Nilsson's MC Shop AB"],
             ['Industrigatan 48'],
             ['58277 Linköping'],
-            ['Tel 013-141459'],
-            ['Verkstad Mob. 072-7141471'],
+            ['Tel 013-141458'],
+            #['Verkstad Mob. 072-7141471'],
             ['ESD 2012']]
 
     b=Table(data,style=[        #(col, row)
-                        ('ALIGN',(0,0),(0,5),'CENTER'),
+                        ('ALIGN',(0,0),(0,4),'CENTER'),
                         
     ])
     #f._argW[0]=1.6*inch
@@ -636,7 +647,7 @@ def some_view3(request, *args, **kwargs):
     #counter = 0
     for article in workorder.article_set.all():
         #counter += 1
-        data = [[article.article_nr, article.quantity, article.description, article.price, article.price_total ]]
+        data = [[article.article_nr, article.quantity, article.description, remove_exponent(article.price), remove_exponent(article.price_total) ]]
         e=Table(data,style=[        #(col, row)
                             ('GRID',(0,0),(-1,-1),2,colors.black),
                             ('ALIGN',(0,0),(-1,-1),'LEFT'),             
@@ -694,10 +705,14 @@ def some_view3(request, *args, **kwargs):
 
     cal = workorder.workorder_calculations()
 
-    data = [['Fö. Matr..', cal['expendables']],
-            ['Summa', cal['sum']],
-            ['Moms:', cal['vat']],
-            ['Att betala:', cal['total']]]
+    # data = [['Fö. Matr..', cal['expendables']],
+            # ['Summa', cal['sum']],
+            # ['Moms:', cal['vat']],
+            # ['Att betala:', cal['total']]]
+            
+    data = [['Summa', remove_exponent(cal['sum'])],
+            ['Moms:', remove_exponent(cal['vat'])],
+            ['Att betala:', remove_exponent(cal['total'])]]
 
     g=Table(data,style=[        #(col, row)
                         ('GRID',(1,0),(-1,-1),2,colors.black),
